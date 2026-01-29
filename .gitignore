@@ -1,0 +1,17 @@
+# Symlinked agent config (source of truth is AGENTS.md)
+CLAUDE.md
+
+# FPGA build artifacts
+fpga/ip_repo/
+fpga/output/
+fpga/pkg_*_proj/
+fpga/.Xil/
+fpga/*.log
+fpga/*.jou
+fpga/build.log
+
+*.txt
+*.xml
+*.vcd
+
+.DS_Store
