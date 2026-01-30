@@ -74,9 +74,10 @@ DEPLOY_TMP="$(mktemp -d /tmp/tpu_deploy_local.XXXXXX)"
 trap 'rm -rf "$DEPLOY_TMP"' EXIT
 
 # Assemble deployment: HAL module + test script + artifacts
-mkdir -p "$DEPLOY_TMP/hal"
-cp hal/pynq_host.py "$DEPLOY_TMP/hal/"
-touch "$DEPLOY_TMP/hal/__init__.py"
+mkdir -p "$DEPLOY_TMP/compiler/hal"
+cp compiler/hal/pynq_host.py "$DEPLOY_TMP/compiler/hal/"
+touch "$DEPLOY_TMP/compiler/__init__.py"
+touch "$DEPLOY_TMP/compiler/hal/__init__.py"
 cp tests/fpga/test_mlp.py "$DEPLOY_TMP/"
 cp "$LOCAL_BIT" "$DEPLOY_TMP/minitpu.bit"
 cp "$LOCAL_HWH" "$DEPLOY_TMP/minitpu.hwh"

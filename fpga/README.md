@@ -16,6 +16,19 @@ Automated Vivado batch-mode flow for packaging the TPU RTL into a custom IP and 
 | **1. Package IP** | `../tpu/*.sv` (RTL sources) | `ip_repo/cornell_tpu_1.0/` | Packages TPU RTL into reusable Vivado IP with AXI interfaces |
 | **2. Build System** | IP repo + Zynq presets | `output/artifacts/minitpu.bit` | Creates block design with PS, DMA, TPU; runs synthesis/implementation |
 
+## Xilinx IP Dependencies
+
+> [!CAUTION]
+> This FPGA system integration requires **Xilinx-specific IP** that is NOT portable to other vendors or ASIC:
+
+| IP | VLNV | Purpose | Portable Alternative |
+|----|------|---------|----------------------|
+| **AXI DMA** | `xilinx.com:ip:axi_dma:7.1` | Memory-to-Stream / Stream-to-Memory transfers | Custom DMA or direct memory interface |
+| **Zynq PS** | `xilinx.com:ip:zynq_ultra_ps_e` | Hard processor subsystem | External MCU or soft-core |
+| **AXI SmartConnect** | `xilinx.com:ip:smartconnect` | AXI interconnect | AXI crossbar (open-source available) |
+
+The **TPU core RTL** (`tpu/*.sv`) is vendor-agnostic. Only this system-level integration layer (`fpga/`) requires Xilinx tools and IP. For ASIC, see `asic/` which uses `tpu_core.sv` with simple valid/ready interfaces instead.
+
 ### Key Steps
 
 1. **IP Packaging**: Wraps RTL with AXI-Lite (control) + AXI-Stream (data) interfaces, generates embedded BRAMs

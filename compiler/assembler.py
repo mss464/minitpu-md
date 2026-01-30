@@ -1,97 +1,49 @@
+
 import sys
 import ast
 import os
 import shutil
 import numpy as np
 
+# Updated template using compiler.hal.pynq_host
 HOST_TEMPLATE = """
 import argparse
-import os
+import sys
 import time
+import os
 import numpy as np
-from pynq import Overlay, allocate
 
-REG_ADDR = {
-    "tpu_mode":        0x00,
-    "instr_ready":  0x04,
-    "stream_ready": 0x08,
-    "addr_ram":       0x0C,
-    "length":       0x18,
-}
+# Add compiler path if needed, assuming running from tests/fpga or similar
+# sys.path.append(...)
 
-WRITE_BRAM = 1
-READ_BRAM  = 2
-COMPUTE    = 3
-WRITE_IRAM = 4
-
-def wait_for_flag(mmio, name, expected=1, poll_delay=0.001):
-    offset = REG_ADDR[name]
-    while mmio.read(offset) != expected:
-        time.sleep(poll_delay)
+try:
+    from compiler.hal.pynq_host import TpuDriver
+except ImportError:
+    # Try local import if hal is in current dir (for board deployment)
+    try:
+        from hal.pynq_host import TpuDriver
+    except ImportError:
+        # Fallback for development/simulation
+        print("Warning: Could not import TpuDriver")
+        TpuDriver = None
 
 # --- Auto-injected ---
 LOADS = __LOADS__
 STORES = __STORES__
 
-def write_bram(mmio, dma, addr, values):
-    in_buf = allocate(shape=values.shape, dtype=np.int64)
-    value_bits = values.view(np.uint32)
-    wait_for_flag(mmio, "instr_ready", 1)
-    mmio.write(REG_ADDR["addr_ram"], addr)
-    mmio.write(REG_ADDR["length"], values.size)
-    mmio.write(REG_ADDR["tpu_mode"], WRITE_BRAM)
-
-    wait_for_flag(mmio, "stream_ready", 1)
-    in_buf[:] = value_bits.astype(np.uint64)
-    dma.sendchannel.transfer(in_buf)
-    dma.sendchannel.wait()
-    wait_for_flag(mmio, "instr_ready", 1)
-    in_buf.freebuffer()
-    mmio.write(REG_ADDR["tpu_mode"], 0)
-
-def read_bram(mmio, dma, addr, length):
-
-    out_buf = allocate(shape=(length,), dtype=np.float32)
-    # wait_for_flag(mmio, "stream_ready", 1)
-    wait_for_flag(mmio, "instr_ready", 1)
-    mmio.write(REG_ADDR["addr_ram"], addr)
-    mmio.write(REG_ADDR["length"], length)
-    mmio.write(REG_ADDR["tpu_mode"], READ_BRAM)
-
-    dma.recvchannel.transfer(out_buf)
-    dma.recvchannel.wait()
-
-    wait_for_flag(mmio, "instr_ready", 1)
-    mmio.write(REG_ADDR["tpu_mode"], 0)
-
-    arr = np.copy(out_buf)
-    out_buf.freebuffer()
-    return arr
-
 def main():
-    parser = argparse.ArgumentParser(description="PYNQ host program to test TPU (write, compute, read)")
+    parser = argparse.ArgumentParser(description="Generated TPU Test Script")
     parser.add_argument("bitstream", type=str, help="Path to TPU bitstream (.bit)")
-    parser.add_argument("instr_file")
+    parser.add_argument("instr_file", type=str, help="Path to instruction file")
     args = parser.parse_args()
 
-    bit_path = args.bitstream
-    instructions = args.instr_file
+    if not os.path.exists(args.bitstream):
+        raise FileNotFoundError(f"Cannot find {args.bitstream}")
+    if not os.path.exists(args.instr_file):
+        raise FileNotFoundError(f"Cannot find {args.instr_file}")
 
-    if not os.path.exists(bit_path):
-        raise FileNotFoundError(f"Cannot find {bit_path}")
-    hwh_path = os.path.splitext(bit_path)[0] + ".hwh"
-    if not os.path.exists(hwh_path):
-        raise FileNotFoundError(f"Missing .hwh for overlay: {hwh_path}")
-
-    print(f"Programming FPGA with {bit_path}")
-    ol = Overlay(args.bitstream)
-    ol.download()
-
-    dma = ol.axi_dma_0
-    ctrl = ol.tpu_top_v6_0
-    mmio = ctrl.mmio
-
-    base = 0x0000
+    print(f"Programming FPGA with {args.bitstream}")
+    tpu = TpuDriver(args.bitstream)
 
     bench = {
         "load_time": 0.0,
@@ -103,77 +55,56 @@ def main():
 
     overall_start = time.perf_counter()
 
+    # Load data to BRAM
+    print("Loading data...")
     t0 = time.perf_counter()
-    for (addr, length, value) in LOADS:
-        write_bram(mmio, dma, addr, np.array(value, dtype=np.float32).reshape(-1))
+    for addr, length, values in LOADS:
+        # values is a list
+        tpu.write_bram(addr, np.array(values, dtype=np.float32))
     bench["load_time"] = time.perf_counter() - t0
     print("loading data complete")
 
+    # Load instructions
+    print("Loading instructions...")
     instrs = []
-    with open(instructions) as f:
+    with open(args.instr_file) as f:
         for line in f:
-            instrs.append(int(line, 16))
+            line = line.strip()
+            if line:
+                instrs.append(int(line, 16))
     instrs_np = np.array(instrs, dtype=np.uint64)
 
-    instr_buf = allocate(shape=instrs_np.shape, dtype=np.uint64)
-    
     t0 = time.perf_counter()
-    
-    wait_for_flag(mmio, "instr_ready", 1)
-    mmio.write(REG_ADDR["addr_ram"], base)
-    mmio.write(REG_ADDR["length"], len(instrs_np))
-    mmio.write(REG_ADDR["tpu_mode"], WRITE_IRAM)
-    wait_for_flag(mmio, "stream_ready", 1)
-    instr_buf[:] = instrs_np
-    dma.sendchannel.transfer(instr_buf)
-    dma.sendchannel.wait()
-    wait_for_flag(mmio, "instr_ready", 1)
-
+    tpu.write_instructions(instrs_np)
     bench["write_iram_time"] = time.perf_counter() - t0
     print("writing instructions complete")
 
-    mmio.write(REG_ADDR["tpu_mode"], 0)
-    instr_buf.freebuffer()
-
-
+    # Execute compute
+    print("Executing compute...")
     t0 = time.perf_counter()
-
-    wait_for_flag(mmio, "instr_ready", 1)
-    mmio.write(REG_ADDR["tpu_mode"], COMPUTE)
-    wait_for_flag(mmio, "instr_ready", 1)
-
+    tpu.compute()
     bench["compute_time"] = time.perf_counter() - t0
     print("compute complete")
 
-    mmio.write(REG_ADDR["tpu_mode"], 0)
-
-    
-    # Compute overall read window
-    min_addr = min(addr for (addr, _, _) in STORES)
-    max_addr = max(addr + (length) for (addr, length, _) in STORES)
-    total_len = max_addr - min_addr
-
-    # Single DMA read
+    # Read back results
+    print("Reading results...")
     t0 = time.perf_counter()
-    merged = read_bram(mmio, dma, min_addr, total_len + 1) # idk why but the +1 fixes the bus error bug somehow
+    for addr, length, label in STORES:
+        result = tpu.read_bram(addr, length)
+        print(f"{label} = {result}")
     bench["store_time"] = time.perf_counter() - t0
-
-    for (addr, length, label) in STORES:
-        start = addr - min_addr
-        end = start + length
-        out = merged[start:end]
-        print(f"{label} = {out}")
-
     print("storing complete")
+
     bench["total_time"] = time.perf_counter() - overall_start
+
     print("===== BENCHMARK RESULTS =====")
     for key, val in bench.items():
         print(f"{key}: {val*1000:.3f} ms")
 
 if __name__ == "__main__":
     main()
-
 """
+
 
 OPCODES_VPU = {
     "add": 0,
@@ -310,19 +241,6 @@ def assemble_line(line: str, matmul_len: int = 16):
 
     raise ValueError(f"Unknown op: {op}")
 
-def generate_memory_image(LOADS):
-
-    max_addr = 0
-    for addr, length, _ in LOADS:
-        max_addr = max(max_addr, addr + length)
-
-    memory = [0.0] * max_addr
-
-    for addr, length, values in LOADS:
-        memory[addr:addr+length] = values
-
-    return memory, max_addr
-
 def generate_host_py(host_path, loads, stores):
     with open(host_path, "w") as f:
         template = HOST_TEMPLATE.replace(
@@ -334,6 +252,11 @@ def generate_host_py(host_path, loads, stores):
 
 
 def assemble_file(input_path: str, output_path: str, matmul_len: int = 16):
+    
+    # clear global lists for fresh run
+    LOADS.clear()
+    STORES.clear()
+
     with open(input_path, "r") as f:
         lines = f.readlines()
 
@@ -353,30 +276,23 @@ def assemble_file(input_path: str, output_path: str, matmul_len: int = 16):
 
     print(f"Assembly complete. Wrote {len(assembled_words)} instructions to {output_path}")
 
-    # optimization with linear memory allocation
-    data_stream, size = generate_memory_image(LOADS)
-
-    loads = [(0, size, data_stream)]
-
-    generate_host_py("host.py", loads, STORES)
-
-    # deploys files to folder tpu_deploy
-    deploy_dir = os.path.join(os.path.dirname(output_path), "tpu_deploy")
-
-    if not os.path.exists(deploy_dir):
-        raise FileNotFoundError(f"tpu_deploy folder not found: {deploy_dir}")
-
-    # Overwrite files inside tpu_deploy
-    instr_dest = os.path.join(deploy_dir, os.path.basename(output_path))
-    host_dest = os.path.join(deploy_dir, "host.py")
-
-    shutil.copy2(output_path, instr_dest)
-    shutil.copy2("host.py", host_dest)
+    # Generate host code in the same directory as output_path named "test_generated.py"
+    # or just assume output_path dir
+    
+    output_dir = os.path.dirname(os.path.abspath(output_path))
+    host_py_path = os.path.join(output_dir, "test_generated.py")
+    
+    generate_host_py(host_py_path, LOADS, STORES)
+    print(f"Generated host script: {host_py_path}")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python assemble.py input.txt output.txt")
+    if len(sys.argv) < 3:
+        print("Usage: python assemble.py input.txt output.txt [matmul_len]")
         sys.exit(1)
+    
+    matmul_len = 16
+    if len(sys.argv) > 3:
+        matmul_len = int(sys.argv[3])
 
-    assemble_file(sys.argv[1], sys.argv[2])
+    assemble_file(sys.argv[1], sys.argv[2], matmul_len)

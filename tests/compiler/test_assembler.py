@@ -10,6 +10,12 @@ class TestAssembler(unittest.TestCase):
         # Expected hex logic here...
 
     def test_load_encoding(self):
-        # Assembler expects: load <addr>, <length>, <values>
+        # load instruction populates LOADS list, doesn't generate instruction word
+        # Import the module to access the LOADS list
+        from compiler import assembler
+        assembler.LOADS = []  # Reset
         instr = assemble_line("load 0, 2, [1.0, 2.0]")
-        self.assertIsNotNone(instr)
+        # load returns None (no instruction word), but populates LOADS
+        self.assertIsNone(instr)
+        self.assertEqual(len(assembler.LOADS), 1)
+        self.assertEqual(assembler.LOADS[0], (0, 2, [1.0, 2.0]))

@@ -29,13 +29,20 @@ Define `TARGET_ASIC` during synthesis.
 
 ## Interfaces
 
-The core exposes a stream-like interface for data ingestion and a control interface for instruction dispatch.
+The core RTL (`tpu_top_v6.sv`) implements AXI interfaces in **hand-coded Verilog** — no vendor IP dependencies.
 
-| Interface | Type | Description |
-|-----------|------|-------------|
-| **Control** | Register | Memory mapped registers for start/stop/status |
-| **Stream In** | AXIS-like | Data loading into Scratchpad |
-| **Stream Out** | AXIS-like | Results readback to Host |
+| Interface | Type | Width | Implementation |
+|-----------|------|-------|----------------|
+| **S00_AXI** | AXI4-Lite Slave | 32-bit data | `tpu_top_v4_slave_lite_v1_0_S00_AXI.v` |
+| **S00_AXIS** | AXI4-Stream Slave | 64-bit data | `tpu_top_v4_slave_stream_V1_0_S00_AXIS.v` |
+| **M00_AXIS** | AXI4-Stream Master | 32-bit data | `tpu_top_v4_master_stream_V1_0_M00_AXIS.v` |
+
+> [!IMPORTANT]
+> **What's NOT in this directory:** The **DMA controller** that drives the AXI-Stream interfaces is a **Xilinx IP** (`axi_dma:7.1`) instantiated in `fpga/build_bd_bitstream.tcl`. For ASIC, `asic/tpu_core.sv` replaces these with simple valid/ready FIFO interfaces.
+
+### Portability Note
+- ✅ All `.sv`/`.v` files in `tpu/` are vendor-agnostic
+- ❌ A working system also requires a DMA controller (Xilinx IP or custom)
 
 ## Simulation
 
@@ -45,3 +52,7 @@ To run tests, see `tests/` directory.
 - **Architecture Update**: Replaced `blk_mem_gen` hard IP with `mem_wrapper` for portable BRAM inference.
 - **Portability**: Codebase now supports generic FPGA targets (U280/V80/Zynq) and behavioral simulation for ASIC without modifying RTL.
 - **Refactoring**: `tpu_top_v6` and `bram_top` validated to check for IP dependencies.
+
+## Status Log (2026-01-29)
+- **BRAM vs Inferred RAM**: `bram_top.sv` changed from `blk_mem_gen_0` (origin/main) to `mem_wrapper` with `RAM_STYLE("block")`; instruction RAM in `tpu_top_v6.sv` changed from `blk_mem_gen_1` to `mem_wrapper` with `RAM_STYLE("block")`. Legacy `blk_mem_gen` behavior (user-reported): **write-first**, **2-cycle read latency**, **pipelined sequential reads** (now modeled in `mem_wrapper.sv`).
+- **Instruction Fetch**: `tpu_top_v6.sv` retains origin/main fetch sequencing (no added pre-fetch on compute entry); timing is expected to match legacy BRAM via `mem_wrapper` latency.

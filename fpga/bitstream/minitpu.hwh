@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Thu Jan 15 11:10:49 2026" VIVADOVERSION="2023.2">
+<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Fri Jan 30 13:41:44 2026" VIVADOVERSION="2023.2">
 
   <SYSTEMINFO ARCH="zynquplus" DEVICE="xczu3eg" NAME="minitpu" PACKAGE="sbva484" SPEEDGRADE="-1"/>
 

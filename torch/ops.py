@@ -4,7 +4,7 @@ This module acts as a facade, exporting low-level TPU instructions and memory al
 """
 
 from compiler.tpu_txt import load, store, matmul, add, sub, mul, relu, relu_derivative, get_instruction_log
-from runtime.allocator import allocator as mem
+from compiler.runtime.allocator import allocator as mem
 
 __all__ = [
     "load",

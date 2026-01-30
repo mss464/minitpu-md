@@ -1,31 +1,48 @@
 ---
 name: FPGA Deployment
-description: Bitstream generation and IP packaging for Xilinx FPGAs
-status: draft
+description: Build bitstreams and run FPGA board tests for the Mini-TPU
+status: stable
 ---
 
 # FPGA Deployment
 
-> [!NOTE]
-> **STATUS: DRAFT / PLACEHOLDER**
-> This skill is currently a scaffold. Using the Makefile is correct, but the exact TCL parameters need validation.
+This skill handles the Vivado-based flow for building Mini-TPU bitstreams and running PYNQ board tests.
 
-This skill handles the Vivado-based flow for deploying the TPU to FPGA hardware.
+## Quick Start
 
-## Workflow
+Run the local bitstream test (default):
+```bash
+agent-skills/fpga/deploy/scripts/board_test.sh
+```
 
-1.  **Bitstream Generation**
-    Run the complete build flow:
-    ```bash
-    cd fpga && make all
-    ```
+Override board settings if needed:
+```bash
+BOARD_IP=132.236.59.64 BOARD_USER=xilinx BOARD_PASS=xilinx \
+agent-skills/fpga/deploy/scripts/board_test.sh
+```
 
-2.  **IP Packaging**
-    If updating the IP core:
-    ```bash
-    vivado -mode batch -source package_tpu_ip.tcl
-    ```
+Optionally run the origin/main reference first:
+```bash
+RUN_ORIGIN=1 agent-skills/fpga/deploy/scripts/board_test.sh
+```
 
-## Do's and Don'ts
-- **DO** use the `2023.2` Vivado version as configured in the Makefile.
-- **DO** check timing reports in `output/` after build.
+## Build Bitstream (optional)
+
+If `vivado` is not on PATH:
+```bash
+source /opt/xilinx/Vitis/2023.2/settings64.sh
+```
+
+Then build:
+```bash
+cd fpga && make bitstream
+```
+
+Artifacts land in `fpga/output/artifacts/`.
+
+## Board Test Details
+
+- Board defaults come from `fpga/Makefile` (`BOARD_IP`, `BOARD_USER`, `BOARD_PASS`).
+- Local test defaults to `fpga/bitstream/minitpu.{bit,hwh}`; override with `LOCAL_BIT`/`LOCAL_HWH`.
+- Host/instructions default to `software/tpu_deploy` or `legacy-software/tpu_deploy` when present; override via `HOST_DIR` or `HOST_PY`/`INSTR_FILE`.
+- Reference test uses `origin/main:software/tpu_deploy/{CornellTPU.bit,CornellTPU.hwh,host.py,tpu_instructions.txt}` when `RUN_ORIGIN=1`.

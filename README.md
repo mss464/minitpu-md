@@ -18,6 +18,50 @@ mini-tpu/
 └── tpu/                # Core RTL
 ```
 
+## Architecture Overview
+
+The design follows a **two-tier architecture** separating portable compute logic from platform-specific system integration:
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        System Integration Layer                          │
+│  (Platform-specific: fpga/ or asic/)                                     │
+│                                                                          │
+│   FPGA (fpga/):                      ASIC (asic/):                       │
+│   ├─ Xilinx AXI DMA IP               ├─ tpu_core.sv (valid/ready I/O)    │
+│   ├─ Zynq PS (hard processor)        ├─ SPI bridge (Tiny Tapeout)        │
+│   └─ Block design integration        └─ Blackboxed SRAMs                 │
+└────────────────────────────┬────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         TPU Core Layer (tpu/)                            │
+│  (Portable: vendor-agnostic SystemVerilog)                               │
+│                                                                          │
+│   ├─ tpu_top_v6.sv      # Top wrapper with AXI interfaces (hand-coded)  │
+│   ├─ compute_core.sv    # Systolic + VPU control                        │
+│   ├─ systolic.sv        # 8x8 weight-stationary array                   │
+│   ├─ mem_wrapper.sv     # Portable BRAM (ifdef FPGA/ASIC)               │
+│   └─ ...                                                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### What's Portable (tpu/)
+- All compute RTL (systolic array, VPU, decoder, PC)
+- AXI-Lite and AXI-Stream **interface logic** (hand-coded Verilog, no vendor IP)
+- Memory abstraction via `mem_wrapper.sv` with `TARGET_FPGA`/`TARGET_ASIC` ifdefs
+
+### What's Platform-Specific
+| Component | FPGA (Xilinx) | ASIC |
+|-----------|---------------|------|
+| **DMA Engine** | Xilinx `axi_dma` IP | Not used (direct FIFO interface) |
+| **Host Interface** | Zynq PS via AXI | GPIO/SPI bridge |
+| **Memory** | Inferred BRAM/URAM | Blackboxed SRAM macros |
+| **Top Wrapper** | `tpu_top_v6.sv` | `tpu_core.sv` |
+
+> [!IMPORTANT]
+> The `tpu/` directory contains AXI interface *implementations* in RTL, but the **DMA controller** that drives them is a Xilinx IP instantiated in `fpga/`. For ASIC, `asic/tpu_core.sv` replaces AXI-Stream with simple valid/ready handshaking.
+
 ## Pending Decisions
 
 Architectural decisions deferred for future consideration:
@@ -32,6 +76,25 @@ Architectural decisions deferred for future consideration:
 | **Memory Layout** | Baked into module | Separate metadata | Embedding addresses in compiled module is simpler; separate metadata allows runtime relocation. |
 | **Error Handling** | Timeout-based | Hardware interrupts | GPIO-based ASIC lacks interrupt support; timeout polling is the fallback. |
 | **HAL Testing** | Simulator as golden reference | Mock interfaces | Using simulator output as ground truth for all HAL implementations. |
+
+## Software Stack
+
+The software follows a 4-layer architecture:
+
+```
+torch/     → User API (tensors, nn layers)
+compiler/  → IR, encoding, TPUModule packaging  
+runtime/   → TPUExecutor, memory allocation
+hal/       → Device drivers (Simulator, PYNQ, XRT)
+```
+
+### Design Decisions
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Simulator accuracy** | numpy float32 | Functional verification, not bit-accurate IEEE 754 |
+| **Matmul dimensions** | Fixed 4×4 in HW | Variable sizes via software tiling |
+| **Serialization** | Binary TPUModule | No code generation; generic deployment scripts |
 
 
 ## Quick Start
