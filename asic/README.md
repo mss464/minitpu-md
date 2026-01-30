@@ -2,6 +2,12 @@
 
 **Target**: Tiny Tapeout (TT07+) using IHP SG13G2 130nm BiCMOS Open Source PDK
 
+## 🚀 Critical TODOs for Handoff
+- [ ] **SPI Bridge**: Complete FSM in `src/spi_bridge.sv` (currently skeleton).
+- [ ] **SRAM Integration**: Replace `sram_blackbox.sv` with hardened macros + banking logic.
+- [ ] **Pad Ring**: Define pinout constraints and generate IO ring.
+- [ ] **Wrapper**: Create `tt_um_minitpu.sv` top-level for Tiny Tapeout.
+
 ## Tiny Tapeout Integration
 
 ### 24-Pin Constraint

@@ -7,7 +7,7 @@ A compact ML stack built by Cornell students, taking a bottom-up approach from a
 - [/] **FPGA Flow**: Bitstream generation functional.
     - [x] Board deployment scripts (`board_test.sh`).
     - [ ] **Fix**: Data shift bug in `slave_stream` RTL (Patch planned).
-- [ ] **ASIC Flow**: Initial behavioral models ready. Tapeout flow pending.
+- [/] **ASIC Flow**: Phase 1 (Core GDS) complete. Phase 2 (Integration/Tapeout) pending.
 
 ## Project Structure
 ```text
