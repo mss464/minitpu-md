@@ -1,48 +1,66 @@
 ---
-name: FPGA Deployment
-description: Build bitstreams and run FPGA board tests for the Mini-TPU
+name: FPGA Test Generation & Deployment
+description: Generate test cases from Torch models, build bitstreams, and verify on FPGA hardware.
 status: stable
 ---
 
-# FPGA Deployment
+# FPGA Test Generation & Deployment
 
-This skill handles the Vivado-based flow for building Mini-TPU bitstreams and running PYNQ board tests.
+This skill documents the modular Hardware-in-the-Loop (HIL) testing flow for the Mini-TPU. The process follows industry standard verification practices:
+1.  **Golden Model**: Run high-level Python simulation (Torch) to generate ground truth data and execution traces.
+2.  **Artifact Generation**: Assemble traces into binary instructions and generate host-side test scripts.
+3.  **HIL Verification**: Deploy artifacts to the FPGA board and execute against the hardware.
 
 ## Quick Start
 
-Run the local bitstream test (default):
+### 1. Generate Test Artifacts
+Run the MLP example to generate the instruction trace, then compile it into deployment artifacts:
+
+```bash
+# Ensure project root is in PYTHONPATH
+export PYTHONPATH=. 
+
+# 1. Run Golden Model (Generates mlp_instruction_trace.txt)
+python3 torch/examples/mlp.py
+
+# 2. Compile Artifacts (Generates tests/fpga/mlp_instructions.txt and tests/fpga/test_generated.py)
+python3 compiler/assembler.py mlp_instruction_trace.txt tests/fpga/mlp_instructions.txt
+
+# 3. Stage Artifacts for Deployment
+mv tests/fpga/test_generated.py tests/fpga/test_mlp_generated.py
+cp tests/fpga/test_mlp_generated.py tests/fpga/test_mlp.py
+```
+
+### 2. Run Hardware Test
+Deploy the generated artifacts and the current bitstream to the FPGA board:
+
 ```bash
 agent-skills/fpga/deploy/scripts/board_test.sh
 ```
 
-Override board settings if needed:
-```bash
-BOARD_IP=132.236.59.64 BOARD_USER=xilinx BOARD_PASS=xilinx \
-agent-skills/fpga/deploy/scripts/board_test.sh
-```
+## Toolchain Architecture
 
-Optionally run the origin/main reference first:
-```bash
-RUN_ORIGIN=1 agent-skills/fpga/deploy/scripts/board_test.sh
-```
+*   **Golden Model**: `torch/examples/mlp.py`
+    *   Simulates TPU logic using `torch.ops`.
+    *   Produces `mlp_instruction_trace.txt`.
+*   **Assembler**: `compiler/assembler.py`
+    *   Parses the trace.
+    *   Generates binary instructions (`.txt` hex format).
+    *   Generates Python test script (`test_generated.py`) containing the exact random input data/weights used in the simulation run.
+*   **Hardware Abstraction Layer (HAL)**: `compiler/hal/pynq_host.py`
+    *   Reusable `TpuDriver` class handling register I/O, DMA, and interrupts on the PYNQ board.
+*   **Deployment**: `agent-skills/fpga/deploy/scripts/board_test.sh`
+    *   Assembles a temporary deployment package.
+    *   Includes `compiler/hal`, generated test script, and bitstream.
+    *   SCPs to board and executes.
 
 ## Build Bitstream (optional)
 
-If `vivado` is not on PATH:
+If you need to regenerate the FPGA bitstream from RTL:
+
 ```bash
 source /opt/xilinx/Vitis/2023.2/settings64.sh
-```
-
-Then build:
-```bash
 cd fpga && make bitstream
 ```
-
-Artifacts land in `fpga/output/artifacts/`.
-
-## Board Test Details
-
-- Board defaults come from `fpga/Makefile` (`BOARD_IP`, `BOARD_USER`, `BOARD_PASS`).
-- Local test defaults to `fpga/bitstream/minitpu.{bit,hwh}`; override with `LOCAL_BIT`/`LOCAL_HWH`.
-- Host/instructions default to `software/tpu_deploy` or `legacy-software/tpu_deploy` when present; override via `HOST_DIR` or `HOST_PY`/`INSTR_FILE`.
-- Reference test uses `origin/main:software/tpu_deploy/{CornellTPU.bit,CornellTPU.hwh,host.py,tpu_instructions.txt}` when `RUN_ORIGIN=1`.
+*   Artifacts: `fpga/output/artifacts/minitpu.{bit,hwh}`
+*   Deployment: Copy artifacts to `fpga/bitstream/` to use them in tests.
