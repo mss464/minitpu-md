@@ -2,20 +2,27 @@
 
 A compact ML stack built by Cornell students, taking a bottom-up approach from a Tensor Processing Unit implementation featuring a systolic array architecture, supporting FPGA prototyping and ASIC tapeout workflows.
 
+## Progress Tracking
+- [x] **Refactoring**: Unified `hal` and `runtime` under `compiler/`. Removed legacy code.
+- [/] **FPGA Flow**: Bitstream generation functional.
+    - [x] Board deployment scripts (`board_test.sh`).
+    - [ ] **Fix**: Data shift bug in `slave_stream` RTL (Patch planned).
+- [ ] **ASIC Flow**: Initial behavioral models ready. Tapeout flow pending.
+
 ## Project Structure
 ```text
 mini-tpu/
-├── agent-skills/       # AI Agent Skills
-├── asic/               # ASIC Synthesis (RTL to netlist to GDS)
-├── compiler/           # Compiler
+├── agent-skills/       # Agentic workflows (fpga, asic, deploy)
+├── asic/               # ASIC Synthesis (OpenLane/TinyTapeout)
+├── compiler/           # Compiler & Runtime
+│   ├── hal/            # Hardware Abstraction Layer (PYNQ, Sim)
+│   └── runtime/        # Execution Runtime & Allocators
 ├── docs/               # Documentation
-├── fpga/               # FPGA Synthesis (RTL to bitstream)
-├── hal/                # Hardware Abstraction Layer (ASIC and FPGA)
-├── legacy-software/    # Legacy Software (FIXME: remove after reviewing)
-├── runtime/            # Runtime
-├── tests/              # Tests
-├── torch/              # PyTorch-like APIs
-└── tpu/                # Core RTL
+├── fpga/               # FPGA Synthesis (Vivado)
+├── tests/              # Verification
+│   └── fpga/           # FPGA board tests
+├── torch/              # PyTorch Frontend
+└── tpu/                # Core RTL (SystemVerilog)
 ```
 
 ## Architecture Overview

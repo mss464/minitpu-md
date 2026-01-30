@@ -20,11 +20,11 @@ Run the MLP example to generate the instruction trace, then compile it into depl
 # Ensure project root is in PYTHONPATH
 export PYTHONPATH=. 
 
-# 1. Run Golden Model (Generates mlp_instruction_trace.txt)
-python3 torch/examples/mlp.py
+# 1. Generate Instruction Trace via Compiler CLI
+python3 compiler/cli.py torch/examples/mlp.py -o tests/fpga/mlp_instruction_trace.txt
 
 # 2. Compile Artifacts (Generates tests/fpga/mlp_instructions.txt and tests/fpga/test_generated.py)
-python3 compiler/assembler.py mlp_instruction_trace.txt tests/fpga/mlp_instructions.txt
+python3 compiler/assembler.py tests/fpga/mlp_instruction_trace.txt tests/fpga/mlp_instructions.txt
 
 # 3. Stage Artifacts for Deployment
 mv tests/fpga/test_generated.py tests/fpga/test_mlp_generated.py
@@ -42,7 +42,7 @@ agent-skills/fpga/deploy/scripts/board_test.sh
 
 *   **Golden Model**: `torch/examples/mlp.py`
     *   Simulates TPU logic using `torch.ops`.
-    *   Produces `mlp_instruction_trace.txt`.
+    *   Produces `tests/fpga/mlp_instruction_trace.txt`.
 *   **Assembler**: `compiler/assembler.py`
     *   Parses the trace.
     *   Generates binary instructions (`.txt` hex format).

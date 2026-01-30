@@ -1,35 +1,43 @@
 # Mini-TPU Test Suite
 
-Tests are organized by component, mirroring the top-level directory structure.
+Tests are organized by component.
 
 ## Structure
 
 ```
 tests/
-├── compiler/           # Codegen, IR emission, module packaging
-├── runtime/            # Allocator, executor, device interface
-├── hal/                # Driver verification
-│   ├── sim/            # Software simulator tests (Golden Reference)
-│   ├── pynq/           # Hardware tests (require PYNQ board)
-│   └── mock/           # Mock drivers for runtime logical testing
-├── torch/              # High-level API tests (Tensor, nn.Linear)
-├── integration/        # End-to-end MLP training/inference tests
-├── tpu/                # RTL testbenches (cocotb/verilator) - EXISTING
-└── e2e/                # System-level E2E tests
+├── tpu/                # RTL testbenches (cocotb) - ACTIVE
+├── fpga/               # FPGA hardware deployment scripts - ACTIVE
+├── compiler/           # [TODO] Codegen, IR emission
+├── runtime/            # [TODO] Allocator, executor
+├── hal/                # [TODO] Driver verification
+├── torch/              # [TODO] High-level API tests
+└── integration/        # [TODO] End-to-end MLP training/inference tests
 ```
 
 ## Running Tests
 
+### RTL Simulation (TPU)
+Requires `cocotb` and a simulator (e.g., `icarus-verilog`).
+
 ```bash
-# Run all software tests
-python -m pytest tests/
-
-# Run specific component
-python -m pytest tests/compiler/
-
-# Run hardware tests (requires connected board)
-python -m pytest tests/hal/pynq/ --board-ip 192.168.2.99
+# Run all TPU unit tests
+cd tests/tpu
+make test
 ```
+
+### FPGA Deployment
+Requires PYNQ board and `pynq` library.
+
+```bash
+# Run MLP on FPGA
+python tests/fpga/test_mlp.py
+```
+
+## TODOs & CI Integration
+- [ ] Re-implement software stack tests (compiler, runtime, torch).
+- [ ] Integrate TPU tests into CI pipeline (GitHub Actions).
+- [ ] Add FPGA hardware-in-the-loop testing to CI.
 
 ## RTL Unit Test Plan (tests/tpu)
 
@@ -37,8 +45,17 @@ Goal: make unit coverage complete, reduce redundancy, and keep targeted regressi
 
 Planned work:
 1) Coverage gap closure
-   - Add/extend unit tests for: compute_core, compute_top, vpu_top, mem_wrapper,
-     sys_interface, bram_top, sram_behavioral, and the AXI top wrappers.
+   - **Mem Wrapper (`mem_wrapper.sv`)**:
+     - Verify 1-cycle read latency (`READ_FIRST`).
+     - Test dual-port independence (Port A vs Port B).
+     - Check parameter propagation (`DATA_WIDTH`, `ADDR_WIDTH`).
+   - **SRAM Behavioral (`sram_behavioral.sv`)**:
+     - Verify 2-cycle read latency (pipeline behavior).
+     - Test specific configurations: `sram_8192x32` (Data) and `sram_256x64` (Instr).
+     - Validate write-enable masking if applicable.
+   - **Other Missing Units**:
+     - `compute_core.sv`, `compute_top.sv`.
+     - `axi` wrappers (verify bus logic).
    - Add tests for legacy fp_adder/fp_mul (or confirm deprecation and remove).
 2) Redundancy cleanup
    - Consolidate size-specific systolic tests (4x4/5x5/16x16) into a

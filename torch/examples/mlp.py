@@ -199,16 +199,6 @@ def backward_pass(W, X, b, Y, dA, Y_addr, ZERO_addr, relu_deriv_addr, dA_addr, d
   
   return dW.astype(np.float32), db.astype(np.float32), dX.astype(np.float32)
 
-def save_instructions(filename="mlp_instructions.txt"):
-  with open(filename, 'w') as f:
-      for instruction in instruction_log:
-          f.write(instruction + '\n')
-  print(f"Saved {len(instruction_log)} instructions to {filename}")
-
-def reset_instruction_log():
-  global instruction_log
-  instruction_log = []
-
 def run_complete_mlp_example(): 
   
     m = 4
@@ -312,27 +302,21 @@ def run_complete_mlp_example():
     
     return loss_value, dW, db, dX
 
-if __name__ == "__main__":
+# TODO(Future): Separate specific software emulation verification logic from IR generation
+def build(): 
+    """
+    Entry point for the compiler CLI.
+    Runs the model definition which triggers instruction logging via torch.ops.
+    """
+    print("\n=== Building MLP Model ===")
     
-    ### WRITE CODE BELOW
-
-    # complete tpu mlp
-    t0 = time.perf_counter()
+    # Run the full flow (Forward + Backward + Logging)
+    # The NumPy operations here serve as "Software Emulation" / Golden Reference
+    # while the side-effect torch.ops calls generate the IR.
     loss_val, dW, db, dX = run_complete_mlp_example()
-    print(f"Loss: {loss_val:.6f}")
-    print(f"dW: {dW}")
-    print(f"db: {db}")
-    print(f"dX: {dX}")
-    time_taken = time.perf_counter() - t0
-    print(f"Software MLP total time: {time_taken*1000:.3f} ms")
     
-    #get instructions
-    global instruction_log
-    instruction_log = get_instruction_log()
-    # log instructions in txt file
-    print("\n--- Saving Instructions ---")
-    save_instructions("mlp_instruction_trace.txt")
-    
-    print(f"\n=== Complete! Generated {len(instruction_log)} instructions ===")
-
+    print(f"Build phase complete. Loss: {loss_val:.6f}")
     mem.dump()
+
+# Note: Old 'save_instructions' and '__main__' logic removed.
+# Use: python3 compiler/cli.py torch/examples/mlp.py -o trace.txt

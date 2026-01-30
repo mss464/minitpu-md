@@ -56,8 +56,8 @@ BOARD_IP ?= 132.236.59.64
 BOARD_USER ?= xilinx
 BOARD_PASS ?= xilinx
 DEPLOY_DIR ?= ~/tpu_deploy
-HOST_SCRIPT ?= ../software/host.py
-INSTR_FILE ?= ../software/tpu_deploy/tpu_instructions.txt
+HOST_SCRIPT ?= ../tests/fpga/test_mlp.py
+INSTR_FILE ?= ../tests/fpga/mlp_instructions.txt
 
 #===============================================================================
 # Main targets
@@ -204,8 +204,19 @@ deploy:
 	@echo "=========================================="
 	@echo "Deploying to $(BOARD_USER)@$(BOARD_IP):$(DEPLOY_DIR)"
 	@echo "=========================================="
+	@# Create temp staging area
+	@mkdir -p .deploy_tmp/compiler/hal
+	@cp -r ../compiler/hal/pynq_host.py .deploy_tmp/compiler/hal/
+	@touch .deploy_tmp/compiler/__init__.py
+	@touch .deploy_tmp/compiler/hal/__init__.py
+	@cp $(HOST_SCRIPT) .deploy_tmp/test_mlp.py
+	@cp $(BITSTREAM) .deploy_tmp/minitpu.bit
+	@cp $(HWH) .deploy_tmp/minitpu.hwh
+	@cp $(INSTR_FILE) .deploy_tmp/tpu_instructions.txt
+	@# Clear remote dir and copy
 	@ssh $(BOARD_USER)@$(BOARD_IP) "mkdir -p $(DEPLOY_DIR)"
-	@scp $(BITSTREAM) $(HWH) $(HOST_SCRIPT) $(INSTR_FILE) $(BOARD_USER)@$(BOARD_IP):$(DEPLOY_DIR)/
+	@scp -r .deploy_tmp/* $(BOARD_USER)@$(BOARD_IP):$(DEPLOY_DIR)/
+	@rm -rf .deploy_tmp
 	@echo "Deployment complete."
 	@echo ""
 
@@ -214,6 +225,6 @@ run: deploy
 	@echo "=========================================="
 	@echo "Running benchmark on PYNQ..."
 	@echo "=========================================="
-	@echo "Executing: sudo python3 host.py $(notdir $(BITSTREAM)) tpu_instructions.txt"
-	@ssh -t $(BOARD_USER)@$(BOARD_IP) "cd $(DEPLOY_DIR) && echo $(BOARD_PASS) | sudo -S python3 host.py $(notdir $(BITSTREAM)) tpu_instructions.txt"
+	@echo "Executing: sudo python3 test_mlp.py minitpu.bit tpu_instructions.txt"
+	@ssh -t $(BOARD_USER)@$(BOARD_IP) "cd $(DEPLOY_DIR) && echo $(BOARD_PASS) | sudo -S python3 test_mlp.py minitpu.bit tpu_instructions.txt"
 

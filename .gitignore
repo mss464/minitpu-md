@@ -13,5 +13,5 @@ fpga/build.log
 *.txt
 *.xml
 *.vcd
-
+*.zip
 .DS_Store

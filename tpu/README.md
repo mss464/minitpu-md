@@ -56,3 +56,20 @@ To run tests, see `tests/` directory.
 ## Status Log (2026-01-29)
 - **BRAM vs Inferred RAM**: `bram_top.sv` changed from `blk_mem_gen_0` (origin/main) to `mem_wrapper` with `RAM_STYLE("block")`; instruction RAM in `tpu_top_v6.sv` changed from `blk_mem_gen_1` to `mem_wrapper` with `RAM_STYLE("block")`. Legacy `blk_mem_gen` behavior (user-reported): **write-first**, **2-cycle read latency**, **pipelined sequential reads** (now modeled in `mem_wrapper.sv`).
 - **Instruction Fetch**: `tpu_top_v6.sv` retains origin/main fetch sequencing (no added pre-fetch on compute entry); timing is expected to match legacy BRAM via `mem_wrapper` latency.
+
+## Issue Report (2026-01-30): Bitstream Data Shift Bug
+
+### Problem Description
+The current FPGA bitstream build exhibits a **1-element data shift** when writing to BRAM during burst transfers. 
+- **Effect**: Input tensor `X` has its first element (`X[0]`) skipped (written to garbage/overwritten), and subsequent elements `X[1..N]` arrive at addresses `0..N-1`.
+- **Impact**: Computation results (`Y`) are incorrect compared to simulation.
+
+### Root Cause Analysis
+The bug is in the Slave Stream Interface RTL: **`tpu_top_v4_slave_stream_V1_0_S00_AXIS.v`**.
+- **Mechanism**: The module buffers incoming data in a pipeline register (`S_AXIS_TDATA_PIPELINED`) which delays data by 1 clock cycle relative to the `write_pointer` increment (which happens immediately on `fifo_wren`).
+- **Result**: `Data[N]` is written to `Address[N+1]`. `Address[0]` is never written with valid data during a burst.
+
+### Source Discrepancy
+- The "Golden" bitstream (`CornellTPU.bit`) works correctly on hardware.
+- However, the source code provided in `golden_ref` (from `tpu_vivado_projects.zip`) **contains the exact same RTL bug**.
+- **Conclusion**: The Golden Bitstream was likely built from a different (corrected) source version than what was preserved in the project archive. To fix the issue locally, the RTL must be patched to remove the pipeline stage.

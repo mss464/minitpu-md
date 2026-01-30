@@ -18,14 +18,10 @@ import numpy as np
 
 try:
     from compiler.hal.pynq_host import TpuDriver
-except ImportError:
-    # Try local import if hal is in current dir (for board deployment)
-    try:
-        from hal.pynq_host import TpuDriver
-    except ImportError:
-        # Fallback for development/simulation
-        print("Warning: Could not import TpuDriver")
-        TpuDriver = None
+except ImportError as e:
+    # Fallback for development/simulation
+    print(f"Warning: Could not import TpuDriver: {e}")
+    TpuDriver = None
 
 # --- Auto-injected ---
 LOADS = __LOADS__
