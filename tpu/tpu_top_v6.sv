@@ -444,14 +444,8 @@ assign compute_done = (mode == 2'd3);
     end
     
     // Instruction BRAM instantiation
-    // Conditional: FPGA uses Xilinx blk_mem_gen, ASIC uses behavioral SRAM
-    // Instruction Memory
-    mem_wrapper #(
-        .DATA_WIDTH(64),
-        .ADDR_WIDTH(8),    // 256 depth
-        .RAM_STYLE("distributed") // Small enough for distributed RAM if needed, but keeping consistent
-    ) I_bram (
-        // Port A - DMA side
+     blk_mem_gen_1 I_bram (
+        // Port A - DMA side (FSM-controlled)
         .clka(s00_axi_aclk),
         .ena(1'b1),
         .wea(instr_write_en),

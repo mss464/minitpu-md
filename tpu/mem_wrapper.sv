@@ -1,14 +1,16 @@
 `timescale 1ns / 1ps
 ////////////////////////////////////////////////////////////////////////////////
 // Module: mem_wrapper
-// Description: Platform-agnostic True Dual-Port RAM wrapper
+// Description: Portable True Dual-Port RAM wrapper with 1-cycle read latency.
+// Behavior: read-first, matches Xilinx blk_mem_gen with:
+//   - Register_PortA_Output_of_Memory_Primitives = false  
+//   - Register_PortB_Output_of_Memory_Primitives = false
+//   - Operating_Mode_A = READ_FIRST
+//   - Operating_Mode_B = READ_FIRST
 //
-// supported Targets:
-//   - TARGET_FPGA: Infers Xilinx BRAM/URAM (Synchronous read)
-//   - TARGET_ASIC: Instantiates behavioral model (or PDK macros in future)
-//
-// Note: Port A is typically used for DMA/External access
-//       Port B is typically used for Compute/Internal access
+// Latency: 1 cycle from address assertion to valid data output
+//   Cycle 0: Address presented, ena=1
+//   Cycle 1: Data appears on output (douta/doutb)
 ////////////////////////////////////////////////////////////////////////////////
 
 module mem_wrapper #(
@@ -35,61 +37,40 @@ module mem_wrapper #(
 );
 
 `ifdef TARGET_FPGA
-    // -------------------------------------------------------------------------
-    // FPGA Implementation: Inferred BRAM/URAM
-    // -------------------------------------------------------------------------
-    
-    // Explicitly define ram_style for Vivado synthesis (block, ultra, distributed)
-    (* ram_style = RAM_STYLE *) 
+    // FPGA inference with explicit ram_style
+    (* ram_style = RAM_STYLE *)
     logic [DATA_WIDTH-1:0] mem [0:DEPTH-1];
-
-    // Port A
-    always_ff @(posedge clka) begin
-        if (ena) begin
-            if (wea)
-                mem[addra] <= dina;
-            douta <= mem[addra]; // Read-during-write: New data (Write First) or Old (Read First)?
-                                 // Standard inference usually defaults to Read-First or No-Change depending on coding.
-                                 // Ideally, valid data is read.
-        end
-    end
-
-    // Port B
-    always_ff @(posedge clkb) begin
-        if (enb) begin
-            if (web)
-                mem[addrb] <= dinb;
-            doutb <= mem[addrb];
-        end
-    end
-
 `else
-    // -------------------------------------------------------------------------
-    // ASIC / Simulation Implementation
-    // -------------------------------------------------------------------------
-    // Ideally map to SRAM macros here. For now, use behavioral model that
-    // approximates standard SRAM macro behavior (Read-First).
-    
+    // Generic behavioral RAM (ASIC/sim)
     logic [DATA_WIDTH-1:0] mem [0:DEPTH-1];
+`endif
 
-    // Port A
+    // Port A: 1-cycle read latency, READ_FIRST mode
+    logic [DATA_WIDTH-1:0] data_a_reg;
+
     always_ff @(posedge clka) begin
         if (ena) begin
-            douta <= mem[addra];
+            // READ_FIRST: read happens before write
+            data_a_reg <= mem[addra];
             if (wea)
                 mem[addra] <= dina;
         end
     end
 
-    // Port B
+    assign douta = data_a_reg;
+
+    // Port B: 1-cycle read latency, READ_FIRST mode
+    logic [DATA_WIDTH-1:0] data_b_reg;
+
     always_ff @(posedge clkb) begin
         if (enb) begin
-            doutb <= mem[addrb];
+            // READ_FIRST: read happens before write
+            data_b_reg <= mem[addrb];
             if (web)
                 mem[addrb] <= dinb;
         end
     end
 
-`endif
+    assign doutb = data_b_reg;
 
 endmodule

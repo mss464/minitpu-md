@@ -63,14 +63,9 @@ module bram_top #(
 
     //-----------------------------------------------
     // BRAM instantiation (true dual-port)
-    // Conditional: FPGA uses Xilinx blk_mem_gen, ASIC uses behavioral SRAM
     //-----------------------------------------------
-    mem_wrapper #(
-        .DATA_WIDTH(DATA_WIDTH),
-        .ADDR_WIDTH(ADDR_WIDTH),
-        .RAM_STYLE("block")
-    ) u_bram (
-        // Port A - DMA side
+    blk_mem_gen_0 u_bram (
+        // Port A - DMA side (FSM-controlled)
         .clka(clk),
         .ena(1'b1),
         .wea(dma_wr_en),
@@ -88,6 +83,3 @@ module bram_top #(
     );
 
 endmodule
-
-
-
