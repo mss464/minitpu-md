@@ -23,7 +23,7 @@ RUN_ORIGIN="${RUN_ORIGIN:-0}"
 # Local artifacts
 LOCAL_BIT="${LOCAL_BIT:-fpga/bitstream/minitpu.bit}"
 LOCAL_HWH="${LOCAL_HWH:-fpga/bitstream/minitpu.hwh}"
-INSTR_FILE="${INSTR_FILE:-software/tpu_deploy/tpu_instructions.txt}"
+INSTR_FILE="${INSTR_FILE:-tests/fpga/mlp_instructions.txt}"
 
 SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
@@ -83,7 +83,7 @@ cp "$LOCAL_HWH" "$DEPLOY_TMP/minitpu.hwh"
 cp "$INSTR_FILE" "$DEPLOY_TMP/tpu_instructions.txt"
 
 # Deploy to board
-sshpass -p "$BOARD_PASS" ssh $SSH_OPTS "${BOARD_USER}@${BOARD_IP}" "rm -rf ${DEPLOY_DIR} && mkdir -p ${DEPLOY_DIR}"
+sshpass -p "$BOARD_PASS" ssh $SSH_OPTS "${BOARD_USER}@${BOARD_IP}" "echo ${BOARD_PASS} | sudo -S rm -rf ${DEPLOY_DIR} && mkdir -p ${DEPLOY_DIR}"
 sshpass -p "$BOARD_PASS" scp -r $SSH_OPTS "$DEPLOY_TMP"/* "${BOARD_USER}@${BOARD_IP}:${DEPLOY_DIR}/"
 
 echo "== Running local bitstream ($(basename "$LOCAL_BIT")) =="
