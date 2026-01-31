@@ -2,13 +2,6 @@
 
 A compact ML stack built by Cornell students, taking a bottom-up approach from a Tensor Processing Unit implementation featuring a systolic array architecture, supporting FPGA prototyping and ASIC tapeout workflows.
 
-## Progress Tracking
-- [x] **Refactoring**: Unified `hal` and `runtime` under `compiler/`. Removed legacy code.
-- [/] **FPGA Flow**: Bitstream generation functional.
-    - [x] Board deployment scripts (`board_test.sh`).
-    - [ ] **Fix**: Data shift bug in `slave_stream` RTL (Patch planned).
-- [/] **ASIC Flow**: Phase 1 (Core GDS) complete. Phase 2 (Integration/Tapeout) pending.
-
 ## Project Structure
 ```text
 mini-tpu/
