@@ -32,7 +32,7 @@ assign operand1_neg = {~operand1[DATA_W-1], operand1[DATA_W-2:0]};
 
 assign adder_a = operand0;
 assign adder_b = (opcode == SUB) ? operand1_neg : operand1;
-parameterized_adder #(.FORMAT("FP32")) fp32_adder (
+fp32_add #(.FORMAT("FP32")) fp32_adder (
   .a(adder_a),
   .b(adder_b),
   .result(adder_result)
@@ -41,7 +41,7 @@ parameterized_adder #(.FORMAT("FP32")) fp32_adder (
 assign mul_a = operand0;
 assign mul_b = operand1;
 
-parameterized_mul #(.FORMAT("FP32")) fp32_mul (
+fp32_mul #(.FORMAT("FP32")) fp32_multiplier (
   .a(mul_a),
   .b(mul_b),
   .result(mul_result)

@@ -24,7 +24,8 @@ IP_VENDOR ?= cornell.edu
 IP_LIBRARY ?= user
 
 # Directory settings
-RTL_DIR ?= ../tpu
+TPU_RTL_DIR ?= ../tpu
+FPGA_RTL_DIR ?= rtl
 IP_REPO_DIR ?= ip_repo
 OUTPUT_DIR ?= output
 PROJ_NAME ?= tpu_system
@@ -87,7 +88,8 @@ help:
 	@echo "  PART         FPGA part number (default: $(PART))"
 	@echo "  IP_NAME      IP core name (default: $(IP_NAME))"
 	@echo "  IP_VERSION   IP version (default: $(IP_VERSION))"
-	@echo "  RTL_DIR      RTL source directory (default: $(RTL_DIR))"
+	@echo "  TPU_RTL_DIR  Core TPU RTL directory (default: $(TPU_RTL_DIR))"
+	@echo "  FPGA_RTL_DIR FPGA interface RTL directory (default: $(FPGA_RTL_DIR))"
 	@echo "  IP_REPO_DIR  IP repository output (default: $(IP_REPO_DIR))"
 	@echo "  OUTPUT_DIR   Build output directory (default: $(OUTPUT_DIR))"
 	@echo "  PROJ_NAME    Project name (default: $(PROJ_NAME))"
@@ -105,7 +107,7 @@ help:
 # Package TPU IP
 package_ip: $(COMPONENT_XML)
 
-$(COMPONENT_XML): $(wildcard $(RTL_DIR)/*.v) $(wildcard $(RTL_DIR)/*.sv)
+$(COMPONENT_XML): $(wildcard $(TPU_RTL_DIR)/*.sv) $(wildcard $(FPGA_RTL_DIR)/*.v) $(wildcard $(FPGA_RTL_DIR)/*.sv)
 	@echo "=========================================="
 	@echo "Packaging TPU IP: $(IP_NAME) v$(IP_VERSION)"
 	@echo "=========================================="
@@ -116,7 +118,8 @@ $(COMPONENT_XML): $(wildcard $(RTL_DIR)/*.v) $(wildcard $(RTL_DIR)/*.sv)
 		-ip_vendor $(IP_VENDOR) \
 		-ip_library $(IP_LIBRARY) \
 		-part $(PART) \
-		-rtl_dir $(RTL_DIR) \
+		-rtl_dir $(TPU_RTL_DIR) \
+		-rtl_dir $(FPGA_RTL_DIR) \
 		-repo_out $(IP_REPO_DIR)
 	@echo ""
 	@echo "IP packaged successfully: $(IP_OUT_DIR)"
@@ -174,18 +177,21 @@ clean_output:
 info:
 	@echo "Cornell TPU Build Configuration"
 	@echo "================================"
-	@echo "PART:        $(PART)"
-	@echo "IP_NAME:     $(IP_NAME)"
-	@echo "IP_VERSION:  $(IP_VERSION)"
-	@echo "RTL_DIR:     $(RTL_DIR)"
-	@echo "IP_REPO_DIR: $(IP_REPO_DIR)"
-	@echo "OUTPUT_DIR:  $(OUTPUT_DIR)"
-	@echo "PROJ_NAME:   $(PROJ_NAME)"
-	@echo "VIVADO:      $(VIVADO)"
+	@echo "PART:         $(PART)"
+	@echo "IP_NAME:      $(IP_NAME)"
+	@echo "IP_VERSION:   $(IP_VERSION)"
+	@echo "TPU_RTL_DIR:  $(TPU_RTL_DIR)"
+	@echo "FPGA_RTL_DIR: $(FPGA_RTL_DIR)"
+	@echo "IP_REPO_DIR:  $(IP_REPO_DIR)"
+	@echo "OUTPUT_DIR:   $(OUTPUT_DIR)"
+	@echo "PROJ_NAME:    $(PROJ_NAME)"
+	@echo "VIVADO:       $(VIVADO)"
 	@echo ""
-	@echo "RTL files:"
-	@ls -1 $(RTL_DIR)/*.v $(RTL_DIR)/*.sv 2>/dev/null | head -10
-	@echo "..."
+	@echo "Core TPU RTL files:"
+	@ls -1 $(TPU_RTL_DIR)/*.sv 2>/dev/null | head -10
+	@echo ""
+	@echo "FPGA interface RTL files:"
+	@ls -1 $(FPGA_RTL_DIR)/*.v $(FPGA_RTL_DIR)/*.sv 2>/dev/null
 
 # Open project in Vivado GUI (after build)
 gui:

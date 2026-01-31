@@ -18,7 +18,7 @@
 # Default values
 set ip_name     "cornell_tpu"
 set part        "xczu3eg-sbva484-1-i"
-set rtl_dir     ""
+set rtl_dirs    {}
 set repo_out    ""
 set ip_version  "1.0"
 set ip_vendor   "cornell.edu"
@@ -27,7 +27,7 @@ set ip_library  "user"
 # Parse command line arguments
 proc parse_args {} {
     global argc argv
-    global ip_name part rtl_dir repo_out ip_version ip_vendor ip_library
+    global ip_name part rtl_dirs repo_out ip_version ip_vendor ip_library
 
     for {set i 0} {$i < $argc} {incr i} {
         set arg [lindex $argv $i]
@@ -42,7 +42,7 @@ proc parse_args {} {
             }
             "-rtl_dir" {
                 incr i
-                set rtl_dir [lindex $argv $i]
+                lappend rtl_dirs [lindex $argv $i]
             }
             "-repo_out" {
                 incr i
@@ -65,7 +65,7 @@ proc parse_args {} {
                 puts "Options:"
                 puts "  -ip_name <name>      IP core name (default: cornell_tpu)"
                 puts "  -part <part>         FPGA part number (default: xczu3eg-sbva484-1-i)"
-                puts "  -rtl_dir <dir>       Directory containing RTL sources"
+                puts "  -rtl_dir <dir>       Directory containing RTL sources (can specify multiple)"
                 puts "  -repo_out <dir>      Output directory for IP repository"
                 puts "  -ip_version <ver>    IP version (default: 1.0)"
                 puts "  -ip_vendor <vendor>  IP vendor (default: cornell.edu)"
@@ -80,8 +80,8 @@ proc parse_args {} {
     }
 
     # Validate required arguments
-    if {$rtl_dir eq ""} {
-        puts "ERROR: -rtl_dir is required"
+    if {[llength $rtl_dirs] == 0} {
+        puts "ERROR: at least one -rtl_dir is required"
         exit 1
     }
     if {$repo_out eq ""} {
@@ -93,7 +93,11 @@ proc parse_args {} {
 parse_args
 
 # Convert to absolute paths
-set rtl_dir [file normalize $rtl_dir]
+set normalized_dirs {}
+foreach d $rtl_dirs {
+    lappend normalized_dirs [file normalize $d]
+}
+set rtl_dirs $normalized_dirs
 set repo_out [file normalize $repo_out]
 
 puts "============================================================"
@@ -102,7 +106,7 @@ puts "============================================================"
 puts "IP Name:     $ip_name"
 puts "IP Version:  $ip_version"
 puts "Part:        $part"
-puts "RTL Dir:     $rtl_dir"
+puts "RTL Dirs:    $rtl_dirs"
 puts "Output Repo: $repo_out"
 puts "============================================================"
 
@@ -126,15 +130,20 @@ set_property verilog_define {TARGET_FPGA=1} [current_fileset]
 ################################################################################
 # Step 2: Add RTL Files
 ################################################################################
-puts "\n>>> Step 2: Adding RTL files from $rtl_dir..."
+puts "\n>>> Step 2: Adding RTL files..."
 
-# Find all Verilog files
-set v_files [glob -nocomplain -directory $rtl_dir *.v]
-set sv_files [glob -nocomplain -directory $rtl_dir *.sv]
+# Find all Verilog files from all RTL directories
+set v_files {}
+set sv_files {}
+foreach rtl_dir $rtl_dirs {
+    puts "  Scanning: $rtl_dir"
+    set v_files [concat $v_files [glob -nocomplain -directory $rtl_dir *.v]]
+    set sv_files [concat $sv_files [glob -nocomplain -directory $rtl_dir *.sv]]
+}
 set all_rtl_files [concat $v_files $sv_files]
 
 if {[llength $all_rtl_files] == 0} {
-    puts "ERROR: No RTL files found in $rtl_dir"
+    puts "ERROR: No RTL files found in: $rtl_dirs"
     close_project
     exit 1
 }
