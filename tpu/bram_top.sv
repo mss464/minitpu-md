@@ -31,8 +31,7 @@ module bram_top #(
     input  logic [ADDR_WIDTH-1:0]    base_addr,
 
     // Write interface (from Slave Stream)
-    input  logic dma_wr_en,                    // FSM write enable
-    input  logic dma_data_valid,               // Valid data from AXI stream
+    input  logic dma_wr_en,                    // asserts when data is valid
     input  logic [DATA_WIDTH-1:0] dma_wr_data,
     input logic [15:0] dma_write_pointer,
 
@@ -50,23 +49,27 @@ module bram_top #(
 );
 
     // Internal signals
-    // FIX: Use combinational address to avoid 1-cycle lag between data and address.
-    // Previously dma_addr was registered, causing data[N] to be written to addr[N-1].
-    wire [ADDR_WIDTH-1:0] dma_wr_addr = base_addr + dma_write_pointer;
-    wire [ADDR_WIDTH-1:0] dma_rd_addr = base_addr + dma_read_pointer;
+    logic [ADDR_WIDTH-1:0] dma_addr = base_addr;
+
+    // address counters
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            dma_addr <= 0;
+        else if (dma_wr_en)
+            dma_addr <= base_addr + dma_write_pointer;
+        else if (dma_rd_en)
+            dma_addr <= base_addr + dma_read_pointer;
+    end
 
     //-----------------------------------------------
     // BRAM instantiation (true dual-port)
     //-----------------------------------------------
-    // FIX: Gate write enable with data_valid to prevent writes when no valid data
-    wire bram_wr_en = dma_wr_en && dma_data_valid;
-
     blk_mem_gen_0 u_bram (
         // Port A - DMA side (FSM-controlled)
         .clka(clk),
         .ena(1'b1),
-        .wea(bram_wr_en),
-        .addra(bram_wr_en ? dma_wr_addr : dma_rd_addr),
+        .wea(dma_wr_en),
+        .addra(dma_addr),
         .dina(dma_wr_data),
         .douta(dma_rd_data),
 

@@ -150,7 +150,7 @@ make test_unit              # All unit tests
 
 ### Data Shift Bug in AXI-Stream Slave (fpga/rtl/)
 
-**Status**: Documented, fix pending.
+**Status**: Believed fixed as of January 31, 2026 (verify in fpga/rtl).
 
 The `tpu_top_v4_slave_stream_V1_0_S00_AXIS.v` module has a 1-element data shift bug:
 - **Root cause**: Pipeline register `S_AXIS_TDATA_PIPELINED` captures data on the same clock edge that `write_pointer_stream` increments, causing a 1-cycle mismatch.
