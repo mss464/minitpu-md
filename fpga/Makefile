@@ -216,6 +216,7 @@ deploy:
 	@touch .deploy_tmp/compiler/__init__.py
 	@touch .deploy_tmp/compiler/hal/__init__.py
 	@cp $(HOST_SCRIPT) .deploy_tmp/test_mlp.py
+	@cp ../tests/fpga/test_data_integrity.py .deploy_tmp/
 	@cp $(BITSTREAM) .deploy_tmp/minitpu.bit
 	@cp $(HWH) .deploy_tmp/minitpu.hwh
 	@cp $(INSTR_FILE) .deploy_tmp/tpu_instructions.txt
@@ -233,4 +234,11 @@ run: deploy
 	@echo "=========================================="
 	@echo "Executing: sudo python3 test_mlp.py minitpu.bit tpu_instructions.txt"
 	@ssh -t $(BOARD_USER)@$(BOARD_IP) "cd $(DEPLOY_DIR) && echo $(BOARD_PASS) | sudo -S python3 test_mlp.py minitpu.bit tpu_instructions.txt"
+
+# Run data integrity test (verifies AXI-Stream bug fix)
+test: deploy
+	@echo "=========================================="
+	@echo "Running data integrity test on PYNQ..."
+	@echo "=========================================="
+	@ssh -t $(BOARD_USER)@$(BOARD_IP) "cd $(DEPLOY_DIR) && echo $(BOARD_PASS) | sudo -S python3 test_data_integrity.py minitpu.bit"
 
