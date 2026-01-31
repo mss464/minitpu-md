@@ -49,17 +49,10 @@ module bram_top #(
 );
 
     // Internal signals
-    logic [ADDR_WIDTH-1:0] dma_addr = base_addr;
-
-    // address counters
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n)
-            dma_addr <= 0;
-        else if (dma_wr_en)
-            dma_addr <= base_addr + dma_write_pointer;
-        else if (dma_rd_en)
-            dma_addr <= base_addr + dma_read_pointer;
-    end
+    // FIX: Use combinational address to avoid 1-cycle lag between data and address.
+    // Previously dma_addr was registered, causing data[N] to be written to addr[N-1].
+    wire [ADDR_WIDTH-1:0] dma_wr_addr = base_addr + dma_write_pointer;
+    wire [ADDR_WIDTH-1:0] dma_rd_addr = base_addr + dma_read_pointer;
 
     //-----------------------------------------------
     // BRAM instantiation (true dual-port)
@@ -69,7 +62,7 @@ module bram_top #(
         .clka(clk),
         .ena(1'b1),
         .wea(dma_wr_en),
-        .addra(dma_addr),
+        .addra(dma_wr_en ? dma_wr_addr : dma_rd_addr),
         .dina(dma_wr_data),
         .douta(dma_rd_data),
 
