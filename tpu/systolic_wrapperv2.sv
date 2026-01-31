@@ -45,7 +45,7 @@ module systolic_wrapper #(
     logic [ADDRESS_WIDTH-1:0] base_addr_x_reg, base_addr_w_reg, base_addr_out_reg;
 
     // Index for load progress (indexes loading beats)
-    integer load_idx;
+    logic [5:0] load_idx;  // Changed from integer for better synthesis/sim compatibility
 
     // Timer for memory fixed latency
     logic [$clog2(MEM_LATENCY+1)-1:0] mem_latency_timer;
@@ -117,7 +117,7 @@ module systolic_wrapper #(
 
     state_t state;
     logic [$clog2(8*N):0] phase_counter;
-    integer row_ptr [N];
+    logic [3:0] row_ptr [N];  // Changed from integer for better Icarus compatibility
 
     // Collect outputs from systolic array when valid out signals asserted
     always_ff @(posedge clk or negedge rst_n) begin
@@ -137,19 +137,19 @@ module systolic_wrapper #(
             end else begin
         
             if (sys_valid_out_41 && row_ptr[0] < N) begin
-                out_matrix[idx(row_ptr[0],0)] <= sys_data_out_41;
+                out_matrix[row_ptr[0]*N + 0] <= sys_data_out_41;
                 row_ptr[0] <= row_ptr[0] + 1;
             end
             if (sys_valid_out_42 && row_ptr[1] < N) begin
-                out_matrix[idx(row_ptr[1],1)] <= sys_data_out_42;
+                out_matrix[row_ptr[1]*N + 1] <= sys_data_out_42;
                 row_ptr[1] <= row_ptr[1] + 1;
             end
             if (sys_valid_out_43 && row_ptr[2] < N) begin
-                out_matrix[idx(row_ptr[2],2)] <= sys_data_out_43;
+                out_matrix[row_ptr[2]*N + 2] <= sys_data_out_43;
                 row_ptr[2] <= row_ptr[2] + 1;
             end
             if (sys_valid_out_44 && row_ptr[3] < N) begin
-                out_matrix[idx(row_ptr[3],3)] <= sys_data_out_44;
+                out_matrix[row_ptr[3]*N + 3] <= sys_data_out_44;
                 row_ptr[3] <= row_ptr[3] + 1;
             end
             

@@ -61,11 +61,12 @@ async def run_one_case(dut, X, W, OUT):
     for sig in init_sigs:
         sig.value = 0
 
-    # Cycle 1
+    # Cycle 1 - apply reset (rst_n is active low)
+    dut.rst_n.value = 0
     await RisingEdge(dut.clk)
     await RisingEdge(dut.clk)
-    
-    dut.rst.value = 0
+
+    dut.rst_n.value = 1
     dut.sys_weight_in_11.value = float_to_fp32_bits(W[0][3])
     dut.sys_accept_w_1.value = 1
     await RisingEdge(dut.clk)

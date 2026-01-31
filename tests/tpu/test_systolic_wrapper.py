@@ -37,14 +37,24 @@ async def reset_dut(dut):
 
 
 async def memory_driver(dut, mem):
-    """Simple memory model that responds to read requests."""
+    """Memory model - combinational read (address sampled on read_en)."""
+    last_addr = 0
     while True:
         await RisingEdge(dut.clk)
+
+        # Sample address when read_en is high
         try:
+            rd_en = int(dut.mem_read_en.value)
             addr = int(dut.mem_req_addr.value)
         except ValueError:
+            rd_en = 0
             addr = 0
-        dut.mem_resp_data.value = mem.get(addr, 0)
+
+        if rd_en:
+            last_addr = addr  # Latch address when read request is made
+
+        # Always output data for the latched address
+        dut.mem_resp_data.value = mem.get(last_addr, 0)
 
 
 def load_matrices(mem, w_base, x_base, w_mat, x_mat):
@@ -81,7 +91,10 @@ async def run_matmul(dut, mem, w_mat, x_mat):
     out = np.zeros((N, N), dtype=float)
     for i in range(N):
         for j in range(N):
-            out[i, j] = fp32_bits_to_float(int(dut.out_matrix[i * N + j].value))
+            idx = i * N + j
+            # Use the OUT_DEBUG generate block for array access (Icarus VPI limitation)
+            raw = int(dut.OUT_DEBUG[idx].out_elem.value)
+            out[i, j] = fp32_bits_to_float(raw)
     return out
 
 

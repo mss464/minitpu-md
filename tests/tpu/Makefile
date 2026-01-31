@@ -97,10 +97,10 @@ test_isa_decoder: $(SIM_BUILD)
 	@echo "=== ISA Decoder Test Complete ==="
 
 # Systolic sequential test (tests for stale weight bug)
-test_systolic_sequential: $(SIM_BUILD)
+test_systolic_wrapper: $(SIM_BUILD)
 	@echo "=== Running Systolic Sequential Test ==="
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s systolic_wrapper $(IVFLAGS) $(SRC_SYSTOLIC_WRAPPER)
-	COCOTB_TEST_MODULES=test_systolic_sequential $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
+	COCOTB_TEST_MODULES=test_systolic_wrapper $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
 	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
 	@echo "=== Systolic Sequential Test Complete ==="
 
@@ -152,14 +152,6 @@ test_pe: $(SIM_BUILD)
 	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
 	@echo "=== PE Test Complete ==="
 
-# Systolic array unit test
-test_systolic: $(SIM_BUILD)
-	@echo "=== Running Systolic Array Unit Test ==="
-	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s systolic $(IVFLAGS) $(SRC_SYSTOLIC)
-	COCOTB_TEST_MODULES=test_systolic $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
-	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
-	@echo "=== Systolic Test Complete ==="
-
 # VPU operation unit test (requires parameterized_adder/mul wrappers)
 test_vpu_op: $(SIM_BUILD)
 	@echo "=== Running VPU Op Unit Test ==="
@@ -168,10 +160,10 @@ test_vpu_op: $(SIM_BUILD)
 		$(SRC_VPU_OP) $(WRAPPERS)/dump_vpu_op.sv || \
 		echo "Warning: vpu_op has dependencies that may need resolution"
 
-test_random_systolic: $(SIM_BUILD)
+test_systolic_array: $(SIM_BUILD)
 	@echo "=== Running Random Systolic Test ==="
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s systolic $(IVFLAGS) $(SRC_SYSTOLIC)
-	COCOTB_TEST_MODULES=test_random_systolic $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
+	COCOTB_TEST_MODULES=test_systolic_array $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
 	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
 
 #==============================================================================
@@ -186,14 +178,14 @@ test_unit: test_fifo4 test_decoder test_pc test_vadd test_fp32_add test_fp32_mul
 	@echo "========================================"
 
 # PE and systolic tests
-test_compute: test_pe test_systolic test_random_systolic
+test_compute: test_pe test_systolic_array test_systolic_wrapper
 	@echo ""
 	@echo "========================================"
 	@echo "All compute tests completed successfully!"
 	@echo "========================================"
 
 # Systolic wrapper tests
-test_wrappers: test_systolic_sequential
+test_wrappers: test_systolic_wrapper
 	@echo ""
 	@echo "========================================"
 	@echo "All wrapper tests completed!"
@@ -254,8 +246,8 @@ help:
 	@echo "  make test_fp32_add    - FP32 adder test"
 	@echo "  make test_fp32_mul    - FP32 multiplier test"
 	@echo "  make test_pe          - Processing element test"
-	@echo "  make test_systolic    - Systolic array test"
-	@echo "  make test_systolic_sequential - Systolic wrapper sequential regression"
+	@echo "  make test_systolic_array     - Systolic array random test (100 cases)"
+	@echo "  make test_systolic_wrapper - Systolic wrapper sequential test"
 	@echo ""
 	@echo "Aggregate Test Targets:"
 	@echo "  make test_unit        - All unit tests (fast)"
@@ -272,5 +264,4 @@ help:
 .PHONY: all clean distclean lint lint_verible help
 .PHONY: test_unit test_compute test_wrappers test_all
 .PHONY: test_fifo4 test_decoder test_pc test_vadd test_fp32_add test_fp32_mul
-.PHONY: test_pe test_systolic
-.PHONY: test_random_systolic test_vpu_op test_isa_decoder test_systolic_sequential
+.PHONY: test_pe test_systolic_array test_vpu_op test_isa_decoder test_systolic_wrapper

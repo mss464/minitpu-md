@@ -45,7 +45,7 @@ BUILD_SCRIPT ?= build_bd_bitstream.tcl
 IP_OUT_DIR := $(IP_REPO_DIR)/$(IP_NAME)_$(IP_VERSION)
 COMPONENT_XML := $(IP_OUT_DIR)/component.xml
 ARTIFACTS_DIR := $(OUTPUT_DIR)/artifacts
-BITSTREAM := $(ARTIFACTS_DIR)/$(BD_NAME)_wrapper.bit
+BITSTREAM := $(ARTIFACTS_DIR)/$(BD_NAME).bit
 HWH := $(ARTIFACTS_DIR)/$(BD_NAME).hwh
 
 #===============================================================================
