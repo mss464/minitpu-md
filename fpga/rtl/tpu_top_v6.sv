@@ -158,6 +158,7 @@
 		.len(dma_len),
 		.data_to_bram(dma_dram_din),
 		.data_to_iram(dma_iram_din),
+		.data_valid(dma_data_valid),
 		.write_pointer_stream(write_pointer),
 		.done(write_bram_done),
 		.write_en(data_write_en || instr_write_en),
@@ -190,6 +191,7 @@
 	wire [12:0] dma_addr;
 	wire [31:0] dma_dram_din, dma_dout;
 	wire [63:0] dma_iram_din;
+	wire dma_data_valid;  // Valid signal from slave_stream
 	
 	reg data_write_en, instr_write_en, read_en, start_compute, start_stream;
     wire write_bram_done, read_bram_done, compute_done;
@@ -351,9 +353,10 @@
         .rst_n(s00_axi_aresetn),
         .base_addr(addr_ram),
     
-        // DMA AXI-Stream interfaces 
-        
+        // DMA AXI-Stream interfaces
+
         .dma_wr_en(data_write_en),
+        .dma_data_valid(dma_data_valid),
         .dma_wr_data(dma_dram_din),
         .dma_write_pointer(write_pointer),
         

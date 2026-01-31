@@ -31,7 +31,8 @@ module bram_top #(
     input  logic [ADDR_WIDTH-1:0]    base_addr,
 
     // Write interface (from Slave Stream)
-    input  logic dma_wr_en,                    // asserts when data is valid
+    input  logic dma_wr_en,                    // FSM write enable
+    input  logic dma_data_valid,               // Valid data from AXI stream
     input  logic [DATA_WIDTH-1:0] dma_wr_data,
     input logic [15:0] dma_write_pointer,
 
@@ -57,12 +58,15 @@ module bram_top #(
     //-----------------------------------------------
     // BRAM instantiation (true dual-port)
     //-----------------------------------------------
+    // FIX: Gate write enable with data_valid to prevent writes when no valid data
+    wire bram_wr_en = dma_wr_en && dma_data_valid;
+
     blk_mem_gen_0 u_bram (
         // Port A - DMA side (FSM-controlled)
         .clka(clk),
         .ena(1'b1),
-        .wea(dma_wr_en),
-        .addra(dma_wr_en ? dma_wr_addr : dma_rd_addr),
+        .wea(bram_wr_en),
+        .addra(bram_wr_en ? dma_wr_addr : dma_rd_addr),
         .dina(dma_wr_data),
         .douta(dma_rd_data),
 

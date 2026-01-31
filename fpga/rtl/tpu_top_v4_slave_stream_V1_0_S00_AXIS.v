@@ -17,6 +17,7 @@
 		input wire [31:0] len,
 		output wire [31:0] data_to_bram,
 		output wire [63:0] data_to_iram,
+		output wire data_valid,  // High when valid data is being output
 		output reg [15:0] write_pointer_stream,
 		output wire done,
 		input wire write_en,
@@ -94,8 +95,13 @@
 	end  
 
 	assign S_AXIS_TREADY	= axis_tready;
-	assign data_to_iram = (tpu_mode_stream == 3'd4) ? data_iram : 64'b0;
-    assign data_to_bram = (tpu_mode_stream == 3'd1) ? data_bram : 32'b0;
+	// FIX: Use combinational data path to avoid register delay.
+	// data_to_bram/iram now directly use S_AXIS_TDATA when fifo_wren is active,
+	// bypassing the data_bram/iram registers which caused 1-cycle delay.
+	// data_valid indicates when the output data is valid (for gating BRAM write enable).
+	assign data_valid = fifo_wren;
+	assign data_to_iram = (tpu_mode_stream == 3'd4 && fifo_wren) ? S_AXIS_TDATA : 64'b0;
+    assign data_to_bram = (tpu_mode_stream == 3'd1 && fifo_wren) ? S_AXIS_TDATA[31:0] : 32'b0;
 	assign done = writes_done;
 	// Control state machine implementation
 	always @(posedge S_AXIS_ACLK) 
