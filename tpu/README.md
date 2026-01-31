@@ -1,75 +1,160 @@
 # Mini-TPU Core RTL
 
-This directory contains the SystemVerilog source code for the Mini-TPU core compute engine.
+This directory contains the **portable, vendor-agnostic** SystemVerilog source code for the Mini-TPU compute engine.
 
-## Directory Structure
+## RTL Module Hierarchy
 
-- `tpu_top_v6.sv`: Top-level wrapper (original, optimized for FPGA AXI).
-- `bram_top.sv`: Memory subsystem wrapper.
-- `mem_wrapper.sv`: **[NEW]** Portable memory wrapper for cross-platform support.
-- `compute_core.sv`: Main control logic for Systolic, Vector, and Scalar units.
-- `systolic.sv`: 8x8 Systolic Array implementation (`ws` = Weight Stationary).
-- `pe.sv`: Processing Element with MAC units.
+```
+                              ┌─────────────────────────────────────────────┐
+                              │          FPGA Top (fpga/rtl/)               │
+                              │                                             │
+                              │   tpu_top_v6.sv ─────────────────────────┐  │
+                              │   ├─ S00_AXI  (AXI-Lite control)         │  │
+                              │   ├─ S00_AXIS (AXI-Stream input)         │  │
+                              │   ├─ M00_AXIS (AXI-Stream output)        │  │
+                              │   │                                      │  │
+                              │   │  ┌─ tpu_top_v4_slave_lite_*.v        │  │
+                              │   │  ├─ tpu_top_v4_slave_stream_*.v      │  │
+                              │   │  └─ tpu_top_v4_master_stream_*.v     │  │
+                              └───┼──────────────────────────────────────┼──┘
+                                  │                                      │
+                                  ▼                                      │
+┌─────────────────────────────────────────────────────────────────────────┼──┐
+│                         TPU Core (tpu/)                                 │  │
+│                                                                         │  │
+│   ┌─────────────┐    ┌────────────────────────────────────────────────┐ │  │
+│   │   pc.sv     │───►│              compute_core.sv                   │ │  │
+│   │ (Program    │    │                                                │ │  │
+│   │  Counter)   │    │   ┌────────────────────────────────────────┐   │ │  │
+│   └─────────────┘    │   │       systolic_wrapperv2.sv            │   │ │  │
+│                      │   │   ┌─────────────────────────────────┐  │   │ │  │
+│   ┌─────────────┐    │   │   │        systolic.sv (4×4)        │  │   │ │  │
+│   │ decoder.sv  │───►│   │   │  ┌───┐ ┌───┐ ┌───┐ ┌───┐       │  │   │ │  │
+│   │ (Instr      │    │   │   │  │PE │→│PE │→│PE │→│PE │→ out  │  │   │ │  │
+│   │  Decode)    │    │   │   │  └─┬─┘ └─┬─┘ └─┬─┘ └─┬─┘       │  │   │ │  │
+│   └─────────────┘    │   │   │    ↓     ↓     ↓     ↓         │  │   │ │  │
+│                      │   │   │  ┌───┐ ┌───┐ ┌───┐ ┌───┐       │  │   │ │  │
+│   ┌─────────────┐    │   │   │  │PE │→│PE │→│PE │→│PE │→ out  │  │   │ │  │
+│   │ bram_top.sv │◄──►│   │   │  └─┬─┘ └─┬─┘ └─┬─┘ └─┬─┘       │  │   │ │  │
+│   │ (Data Mem)  │    │   │   │    ↓     ↓     ↓     ↓         │  │   │ │  │
+│   │             │    │   │   │  ┌───┐ ┌───┐ ┌───┐ ┌───┐       │  │   │ │  │
+│   └─────────────┘    │   │   │  │PE │→│PE │→│PE │→│PE │→ out  │  │   │ │  │
+│                      │   │   │  └─┬─┘ └─┬─┘ └─┬─┘ └─┬─┘       │  │   │ │  │
+│                      │   │   │    ↓     ↓     ↓     ↓         │  │   │ │  │
+│                      │   │   │  ┌───┐ ┌───┐ ┌───┐ ┌───┐       │  │   │ │  │
+│                      │   │   │  │PE │→│PE │→│PE │→│PE │→ out  │  │   │ │  │
+│                      │   │   │  └───┘ └───┘ └───┘ └───┘       │  │   │ │  │
+│                      │   │   └─────────────────────────────────┘  │   │ │  │
+│                      │   └────────────────────────────────────────┘   │ │  │
+│                      │                                                │ │  │
+│                      │   ┌────────────────────────────────────────┐   │ │  │
+│                      │   │           vpu_top.sv                   │   │ │  │
+│                      │   │   ┌─────────────────────────────────┐  │   │ │  │
+│                      │   │   │          vpu_op.sv              │  │   │ │  │
+│                      │   │   │  ┌─────────┐  ┌─────────┐       │  │   │ │  │
+│                      │   │   │  │fp32_add │  │fp32_mul │       │  │   │ │  │
+│                      │   │   │  └─────────┘  └─────────┘       │  │   │ │  │
+│                      │   │   │  + ReLU, D_ReLU                 │  │   │ │  │
+│                      │   │   └─────────────────────────────────┘  │   │ │  │
+│                      │   └────────────────────────────────────────┘   │ │  │
+│                      │                                                │ │  │
+│                      │   ┌────────────────────────────────────────┐   │ │  │
+│                      │   │        compute_top.sv                  │   │ │  │
+│                      │   │   ┌─────────────────────────────────┐  │   │ │  │
+│                      │   │   │          vadd.sv                │  │   │ │  │
+│                      │   │   │     (Simple vector add)         │  │   │ │  │
+│                      │   │   └─────────────────────────────────┘  │   │ │  │
+│                      │   └────────────────────────────────────────┘   │ │  │
+│                      └────────────────────────────────────────────────┘ │  │
+│                                                                         │  │
+│   ┌────────────────────────────────────────────────────────────────────┘│  │
+│   │  PE internals (pe.sv):                                              │  │
+│   │  ┌─────────────────────────────────────────────────────────────┐    │  │
+│   │  │  input W ──►┌──────────┐                                    │    │  │
+│   │  │             │ fp32_mul │──►┌──────────┐                     │    │  │
+│   │  │  input X ──►└──────────┘   │ fp32_add │──► Accumulator ──►Y │    │  │
+│   │  │             accum_in ─────►└──────────┘                     │    │  │
+│   │  └─────────────────────────────────────────────────────────────┘    │  │
+│   └─────────────────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────────────────────────┘
+```
 
-## Memory Architecture
+## File Inventory
 
-The design uses a unified memory abstraction (`mem_wrapper.sv`) to support both FPGA and ASIC flows without code changes.
+### Core Compute (Portable)
+| File | Module | Description |
+|------|--------|-------------|
+| `pe.sv` | `pe` | Processing Element: FP32 MAC unit |
+| `systolic.sv` | `systolic` | 4×4 weight-stationary systolic array |
+| `systolic_wrapperv2.sv` | `systolic_wrapper` | Memory-interfaced wrapper with FSM |
+| `fp32_add.sv` | `fp32_add` | IEEE-754 single-precision adder |
+| `fp32_mul.sv` | `fp32_mul` | IEEE-754 single-precision multiplier |
+| `vpu_op.sv` | `vpu_op` | Vector ALU: ADD, SUB, MUL, ReLU, D_ReLU |
+| `vpu_top.sv` | `vpu_top` | VPU top-level wrapper |
+| `compute_core.sv` | `compute_core` | Orchestrates systolic, VPU, and vadd |
+| `compute_top.sv` | `compute_top` | Vector addition unit wrapper |
+| `vadd.sv` | `vadd` | Simple 32-bit adder |
 
-### FPGA Target (Xilinx UltraScale+/Versal)
-Define `TARGET_FPGA` during synthesis.
-- Infers True Dual-Port **BRAM** or **URAM** using `(* ram_style *)`.
-- No Xilinx IP (`blk_mem_gen`) dependency.
-- Portability across Alveo U280, Versal V80, VCK5000, and Zynq.
+### Control (Portable)
+| File | Module | Description |
+|------|--------|-------------|
+| `decoder.sv` | `decoder` | 64-bit instruction decoder |
+| `pc.sv` | `pc` | 8-bit program counter |
+| `fifo4.sv` | `fifo4` | 8-entry FIFO (used in AXI master) |
 
-### ASIC Target (Tiny Tapeout / IHP SG13G2)
-Define `TARGET_ASIC` during synthesis.
-- Uses behavioral SRAM models for simulation.
-- Maps to `sram_blackbox` or external SPI controller in the ASIC top-level wrapper.
-- Requires external memory (SPI/QSPI) for large data backing.
+### Memory (Portable)
+| File | Module | Description |
+|------|--------|-------------|
+| `bram_top.sv` | `bram_top` | Data memory wrapper |
+| `mem_wrapper.sv` | `mem_wrapper` | Portable dual-port RAM (ifdef FPGA/ASIC) |
+| `sram_behavioral.sv` | `sram_*` | Behavioral SRAM models (simulation only) |
 
-## Interfaces
+### FPGA Interface (Moved to fpga/rtl/)
+The following files have been moved to `fpga/rtl/` as they are FPGA-specific:
+- `tpu_top_v6.sv` - Top-level with AXI interfaces
+- `tpu_top_v4_slave_lite_v1_0_S00_AXI.v` - AXI-Lite slave
+- `tpu_top_v4_slave_stream_V1_0_S00_AXIS.v` - AXI-Stream slave
+- `tpu_top_v4_master_stream_V1_0_M00_AXIS.v` - AXI-Stream master
 
-The core RTL (`tpu_top_v6.sv`) implements AXI interfaces in **hand-coded Verilog** — no vendor IP dependencies.
+## Data Flow
 
-| Interface | Type | Width | Implementation |
-|-----------|------|-------|----------------|
-| **S00_AXI** | AXI4-Lite Slave | 32-bit data | `tpu_top_v4_slave_lite_v1_0_S00_AXI.v` |
-| **S00_AXIS** | AXI4-Stream Slave | 64-bit data | `tpu_top_v4_slave_stream_V1_0_S00_AXIS.v` |
-| **M00_AXIS** | AXI4-Stream Master | 32-bit data | `tpu_top_v4_master_stream_V1_0_M00_AXIS.v` |
-
-> [!IMPORTANT]
-> **What's NOT in this directory:** The **DMA controller** that drives the AXI-Stream interfaces is a **Xilinx IP** (`axi_dma:7.1`) instantiated in `fpga/build_bd_bitstream.tcl`. For ASIC, `asic/tpu_core.sv` replaces these with simple valid/ready FIFO interfaces.
-
-### Portability Note
-- ✅ All `.sv`/`.v` files in `tpu/` are vendor-agnostic
-- ❌ A working system also requires a DMA controller (Xilinx IP or custom)
+```
+                    ┌──────────────────────────────────────────────────┐
+   Input (64-bit)   │                  COMPUTE PATH                     │   Output (32-bit)
+   ────────────────►│                                                   │────────────────►
+                    │  ┌─────────┐   ┌─────────────┐   ┌─────────────┐ │
+   Instructions     │  │ BRAM    │──►│  Systolic   │──►│   Output    │ │
+   ────────────────►│  │ (Data/  │   │   Array     │   │   Buffer    │ │
+                    │  │ Weight) │   │   (4×4)     │   │             │ │
+                    │  └─────────┘   └─────────────┘   └─────────────┘ │
+                    │       │                              ▲           │
+                    │       ▼                              │           │
+                    │  ┌─────────────────────────────────┐ │           │
+                    │  │            VPU                  │─┘           │
+                    │  │  (ReLU, Element-wise ops)       │             │
+                    │  └─────────────────────────────────┘             │
+                    └──────────────────────────────────────────────────┘
+```
 
 ## Simulation
 
-To run tests, see `tests/` directory.
+Run tests from `tests/tpu/`:
+```bash
+cd tests/tpu
+make test_systolic_array    # 100 random 4×4 matmuls
+make test_systolic_wrapper  # Memory-interfaced sequential tests
+make test_unit              # All unit tests
+```
 
-## Status Log (2026-01-28)
-- **Architecture Update**: Replaced `blk_mem_gen` hard IP with `mem_wrapper` for portable BRAM inference.
-- **Portability**: Codebase now supports generic FPGA targets (U280/V80/Zynq) and behavioral simulation for ASIC without modifying RTL.
-- **Refactoring**: `tpu_top_v6` and `bram_top` validated to check for IP dependencies.
+## Known Issues
 
-## Status Log (2026-01-29)
-- **BRAM vs Inferred RAM**: `bram_top.sv` changed from `blk_mem_gen_0` (origin/main) to `mem_wrapper` with `RAM_STYLE("block")`; instruction RAM in `tpu_top_v6.sv` changed from `blk_mem_gen_1` to `mem_wrapper` with `RAM_STYLE("block")`. Legacy `blk_mem_gen` behavior (user-reported): **write-first**, **2-cycle read latency**, **pipelined sequential reads** (now modeled in `mem_wrapper.sv`).
-- **Instruction Fetch**: `tpu_top_v6.sv` retains origin/main fetch sequencing (no added pre-fetch on compute entry); timing is expected to match legacy BRAM via `mem_wrapper` latency.
+### Data Shift Bug in AXI-Stream Slave (fpga/rtl/)
 
-## Issue Report (2026-01-30): Bitstream Data Shift Bug
+**Status**: Documented, fix pending.
 
-### Problem Description
-The current FPGA bitstream build exhibits a **1-element data shift** when writing to BRAM during burst transfers. 
-- **Effect**: Input tensor `X` has its first element (`X[0]`) skipped (written to garbage/overwritten), and subsequent elements `X[1..N]` arrive at addresses `0..N-1`.
-- **Impact**: Computation results (`Y`) are incorrect compared to simulation.
+The `tpu_top_v4_slave_stream_V1_0_S00_AXIS.v` module has a 1-element data shift bug:
+- **Root cause**: Pipeline register `S_AXIS_TDATA_PIPELINED` captures data on the same clock edge that `write_pointer_stream` increments, causing a 1-cycle mismatch.
+- **Effect**: First element written to address 0 is garbage; subsequent elements shifted by 1.
+- **Fix**: Remove pipeline stage or delay write pointer increment.
 
-### Root Cause Analysis
-The bug is in the Slave Stream Interface RTL: **`tpu_top_v4_slave_stream_V1_0_S00_AXIS.v`**.
-- **Mechanism**: The module buffers incoming data in a pipeline register (`S_AXIS_TDATA_PIPELINED`) which delays data by 1 clock cycle relative to the `write_pointer` increment (which happens immediately on `fifo_wren`).
-- **Result**: `Data[N]` is written to `Address[N+1]`. `Address[0]` is never written with valid data during a burst.
-
-### Source Discrepancy
-- The "Golden" bitstream (`CornellTPU.bit`) works correctly on hardware.
-- However, the source code provided in `golden_ref` (from `tpu_vivado_projects.zip`) **contains the exact same RTL bug**.
-- **Conclusion**: The Golden Bitstream was likely built from a different (corrected) source version than what was preserved in the project archive. To fix the issue locally, the RTL must be patched to remove the pipeline stage.
+See main README.md for details.

@@ -80,20 +80,17 @@
 	reg [63:0] data_iram;
 	reg reset;
 	reg t_last_pipelined;
-	reg fifo_wren_pipelined;
-	
-	always @(posedge S_AXIS_ACLK)                                                                  
-	begin                                                                                          
-	  if (!S_AXIS_ARESETN)                                                                         
-	    begin                                                                                      
+
+	always @(posedge S_AXIS_ACLK)
+	begin
+	  if (!S_AXIS_ARESETN)
+	    begin
 	      t_last_pipelined <= 1'b0;
-	      fifo_wren_pipelined <= 1'b0;                                                       
-	    end                                                                                        
-	  else                                                                                         
-	    begin                                                                                      
+	    end
+	  else
+	    begin
 	      t_last_pipelined <= S_AXIS_TLAST;
-	      fifo_wren_pipelined <= fifo_wren;                                                     
-	    end                                                                                        
+	    end
 	end  
 
 	assign S_AXIS_TREADY	= axis_tready;
@@ -192,22 +189,22 @@
 
 
 	// Add user logic here
-	reg [C_S_AXIS_TDATA_WIDTH-1 : 0] S_AXIS_TDATA_PIPELINED;
+	// FIX: Removed pipeline register that caused 1-element data shift bug.
+	// Previously, S_AXIS_TDATA_PIPELINED captured data on the same edge as
+	// write_pointer incremented, causing data[N] to be written to addr[N+1].
 	always @( posedge S_AXIS_ACLK )
 	    begin
-	      if (fifo_wren || fifo_wren_pipelined)// && S_AXIS_TSTRB[byte_index])
+	      if (fifo_wren)
 	        begin
-//	          stream_data_fifo[write_pointer] <= S_AXIS_TDATA[(byte_index*8+7) -: 8];
-              S_AXIS_TDATA_PIPELINED <= S_AXIS_TDATA;
-	          // write to the correct memory based on mode
+	          // Write directly to memory - no pipeline delay
                 case (tpu_mode_stream)
-                    3'd4: data_iram <= S_AXIS_TDATA_PIPELINED;  // instruction memory
-                    3'd1: data_bram <= S_AXIS_TDATA_PIPELINED[31:0];  // data memory
+                    3'd4: data_iram <= S_AXIS_TDATA;  // instruction memory
+                    3'd1: data_bram <= S_AXIS_TDATA[31:0];  // data memory
                     default: begin
                         // optionally: do nothing
                     end
-                endcase 
-	        end  
+                endcase
+	        end
 	    end  
 
 	// User logic ends

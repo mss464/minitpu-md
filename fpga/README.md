@@ -2,18 +2,35 @@
 
 Automated Vivado batch-mode flow for packaging the TPU RTL into a custom IP and building a complete system with Zynq UltraScale+ MPSoC.
 
+## Directory Structure
+
+```
+fpga/
+├── rtl/                    # FPGA-specific RTL (AXI interfaces)
+│   ├── tpu_top_v6.sv       # Top-level with AXI wiring
+│   ├── tpu_top_v4_slave_lite_*.v    # AXI-Lite control
+│   ├── tpu_top_v4_slave_stream_*.v  # AXI-Stream input
+│   └── tpu_top_v4_master_stream_*.v # AXI-Stream output
+├── package_tpu_ip.tcl      # IP packaging script
+├── build_bd_bitstream.tcl  # Block design & bitstream script
+├── Makefile                # Build automation
+├── ip_repo/                # Generated IP (gitignored)
+└── output/                 # Build artifacts (gitignored)
+```
+
 ## Overview
 
 ```
-┌─────────────────┐     package_tpu_ip.tcl     ┌─────────────────┐     build_bd_bitstream.tcl     ┌─────────────────┐
-│   RTL Sources   │ ─────────────────────────► │   TPU IP Core   │ ─────────────────────────────► │    Bitstream    │
-│   (../tpu/*.sv) │                            │ (ip_repo/)      │                                │ (output/)       │
-└─────────────────┘                            └─────────────────┘                                └─────────────────┘
+┌─────────────────┐                           ┌─────────────────┐                                ┌─────────────────┐
+│   RTL Sources   │  package_tpu_ip.tcl       │   TPU IP Core   │  build_bd_bitstream.tcl        │    Bitstream    │
+│  ../tpu/*.sv +  │ ────────────────────────► │ (ip_repo/)      │ ──────────────────────────────►│ (output/)       │
+│  rtl/*.v/*.sv   │                           │                 │                                │                 │
+└─────────────────┘                           └─────────────────┘                                └─────────────────┘
 ```
 
 | Stage | Input | Output | Description |
 |-------|-------|--------|-------------|
-| **1. Package IP** | `../tpu/*.sv` (RTL sources) | `ip_repo/cornell_tpu_1.0/` | Packages TPU RTL into reusable Vivado IP with AXI interfaces |
+| **1. Package IP** | `../tpu/*.sv` + `rtl/*.v` | `ip_repo/cornell_tpu_1.0/` | Packages TPU RTL into reusable Vivado IP with AXI interfaces |
 | **2. Build System** | IP repo + Zynq presets | `output/artifacts/minitpu.bit` | Creates block design with PS, DMA, TPU; runs synthesis/implementation |
 
 ## Xilinx IP Dependencies
@@ -75,10 +92,11 @@ make bitstream     # Step 2: Build BD and generate bitstream
 ### Script 1: Package TPU IP
 
 ```bash
-vivado -mode batch -source scripts/package_tpu_ip.tcl -tclargs \
+vivado -mode batch -source package_tpu_ip.tcl -tclargs \
     -ip_name cornell_tpu \
     -part xczu3eg-sbva484-1-i \
-    -rtl_dir tpu \
+    -rtl_dir ../tpu \
+    -rtl_dir rtl \
     -repo_out ip_repo
 ```
 
@@ -87,7 +105,7 @@ vivado -mode batch -source scripts/package_tpu_ip.tcl -tclargs \
 |----------|---------|-------------|
 | `-ip_name` | `cornell_tpu` | Name for the packaged IP |
 | `-part` | `xczu3eg-sbva484-1-i` | Target FPGA part |
-| `-rtl_dir` | (required) | Directory containing RTL sources |
+| `-rtl_dir` | (required) | Directory containing RTL sources (can specify multiple) |
 | `-repo_out` | (required) | Output directory for IP repository |
 | `-ip_version` | `1.0` | IP version number |
 | `-ip_vendor` | `cornell.edu` | IP vendor string |
@@ -174,6 +192,29 @@ The packaged TPU IP exposes:
 | S00_AXI | AXI4-Lite Slave | 32-bit data, 6-bit addr | Control registers |
 | S00_AXIS | AXI-Stream Slave | 64-bit | Input data stream |
 | M00_AXIS | AXI-Stream Master | 32-bit | Output data stream |
+
+## Known Issues
+
+### Data Shift Bug in AXI-Stream Slave
+
+**Status**: Documented, fix pending.
+
+The `rtl/tpu_top_v4_slave_stream_V1_0_S00_AXIS.v` module has a 1-element data shift bug during burst transfers:
+
+**Root Cause** (lines 195-211):
+```verilog
+S_AXIS_TDATA_PIPELINED <= S_AXIS_TDATA;      // Captures current data
+case (tpu_mode_stream)
+    3'd4: data_iram <= S_AXIS_TDATA_PIPELINED;  // Uses OLD pipelined value
+    3'd1: data_bram <= S_AXIS_TDATA_PIPELINED;  // Uses OLD pipelined value
+endcase
+```
+
+The pipeline register captures data on the same clock edge that `write_pointer_stream` increments, causing data to be written to the wrong address (off by 1).
+
+**Fix Options**:
+1. Remove pipeline register: `data_iram <= S_AXIS_TDATA;`
+2. Delay write pointer increment by 1 cycle
 
 ## Troubleshooting
 
