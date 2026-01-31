@@ -57,8 +57,8 @@ end
 
 // ReLU deriv
 always_comb begin
-  d_relu_result = 1;
-  if (!operand0[DATA_W-1]) begin
+  d_relu_result = 32'h3f800000; // 1.0 in fp32
+  if (operand0[DATA_W-1] || operand0 == 32'h00000000) begin
     d_relu_result = '0;
   end
 end

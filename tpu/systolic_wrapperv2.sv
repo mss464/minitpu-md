@@ -399,6 +399,7 @@ module systolic_wrapper #(
 
                 S_DONE: begin
                     done <= 1;
+                    load_idx <= 0;
                     state <= S_IDLE;
                 end
 
