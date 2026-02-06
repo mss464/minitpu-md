@@ -110,6 +110,22 @@ OPCODES_VPU = {
     "relu_derivative": 4,
 }
 
+# VPU SIMD opcodes (3-bit encoding)
+OPCODES_VCOMPUTE = {
+    "vadd": 0,    # vpu_op ADD
+    "vsub": 1,    # vpu_op SUB
+    "vrelu": 2,   # vpu_op RELU
+    "vmul": 3,    # vpu_op MUL
+    "vmax": 4,
+    "vmin": 5,
+}
+
+# VPU_TYPE field values
+VPU_TYPE_SCALAR = 0
+VPU_TYPE_VLOAD = 1
+VPU_TYPE_VSTORE = 2
+VPU_TYPE_VCOMPUTE = 3
+
 MODE_VPU      = 0
 MODE_SYSTOLIC = 1
 MODE_VADD     = 2
@@ -122,6 +138,14 @@ OPCODE_BITS = 10
 ADDR_MAX   = (1 << ADDR_BITS) - 1
 LEN_MAX    = (1 << LEN_BITS) - 1
 OPCODE_MAX = (1 << OPCODE_BITS) - 1
+
+# Instruction memory limit (hardware constraint)
+IMEM_MAX_SIZE = 256
+
+
+class CompilationError(Exception):
+    """Raised when compilation fails due to hardware constraints."""
+    pass
 
 LOADS = []
 STORES = []
@@ -136,6 +160,13 @@ def check_addr(addr: int, label: str):
     if not (0 <= addr <= ADDR_MAX):
         raise ValueError(f"{label} address {addr} out of range (0..{ADDR_MAX})")
     return addr
+
+
+def check_vreg(vreg: int, name: str):
+    """Validate vector register ID (0-7)."""
+    if not (0 <= vreg <= 7):
+        raise ValueError(f"{name} {vreg} out of range (0-7)")
+    return vreg
 
 
 def encode_vpu(op: str, addr_a: int, addr_b: int, addr_out: int, addr_const: int = 0):
@@ -176,6 +207,80 @@ def encode_systolic(addr_a: int, addr_b: int, addr_out: int, length: int):
 def encode_halt():
     word = 0
     word |= (MODE_HALT & 0b11) << 62
+    return word
+
+
+def encode_vload(vreg_dst: int, addr: int):
+    """
+    Encode VLOAD instruction.
+
+    Args:
+        vreg_dst: Destination vector register (0-7)
+        addr: BRAM start address (13 bits)
+
+    Returns:
+        64-bit instruction word
+    """
+    check_vreg(vreg_dst, "vreg_dst")
+    check_addr(addr, "addr")
+
+    word = 0
+    word |= (MODE_VPU & 0b11) << 62
+    word |= (addr & ADDR_MAX) << 49
+    word |= (VPU_TYPE_VLOAD & 0b111) << 20
+    word |= (vreg_dst & 0b111) << 17
+    return word
+
+
+def encode_vstore(vreg_src: int, addr: int):
+    """
+    Encode VSTORE instruction.
+
+    Args:
+        vreg_src: Source vector register (0-7)
+        addr: BRAM destination address (13 bits)
+
+    Returns:
+        64-bit instruction word
+    """
+    check_vreg(vreg_src, "vreg_src")
+    check_addr(addr, "addr")
+
+    word = 0
+    word |= (MODE_VPU & 0b11) << 62
+    word |= (addr & ADDR_MAX) << 49
+    word |= (VPU_TYPE_VSTORE & 0b111) << 20
+    word |= (vreg_src & 0b111) << 14
+    return word
+
+
+def encode_vcompute(op: str, vreg_dst: int, vreg_a: int, vreg_b: int = 0, scalar_b: bool = False):
+    """
+    Encode VCOMPUTE instruction.
+
+    Args:
+        op: Operation name (vadd, vsub, vmul, vrelu, etc.)
+        vreg_dst: Destination register (0-7)
+        vreg_a: Source register A (0-7)
+        vreg_b: Source register B (0-7), or scalar source if scalar_b=True
+        scalar_b: If True, broadcast vreg_b[0] to all lanes
+
+    Returns:
+        64-bit instruction word
+    """
+    opcode = OPCODES_VCOMPUTE[op]
+    check_vreg(vreg_dst, "vreg_dst")
+    check_vreg(vreg_a, "vreg_a")
+    check_vreg(vreg_b, "vreg_b")
+
+    word = 0
+    word |= (MODE_VPU & 0b11) << 62
+    word |= (VPU_TYPE_VCOMPUTE & 0b111) << 20
+    word |= (vreg_dst & 0b111) << 17
+    word |= (vreg_a & 0b111) << 14
+    word |= (vreg_b & 0b111) << 11
+    word |= (opcode & 0b111) << 4
+    word |= (1 if scalar_b else 0) << 3
     return word
 
 
@@ -265,6 +370,13 @@ def assemble_file(input_path: str, output_path: str, matmul_len: int = 16):
 
     # Always append HALT as the final instruction
     assembled_words.append(encode_halt())
+
+    # Check instruction memory limit
+    if len(assembled_words) > IMEM_MAX_SIZE:
+        raise CompilationError(
+            f"Program has {len(assembled_words)} instructions, exceeds IMEM limit of {IMEM_MAX_SIZE}. "
+            f"Consider using tiled operations to reduce instruction count."
+        )
 
     with open(output_path, "w") as f:
         for word in assembled_words:

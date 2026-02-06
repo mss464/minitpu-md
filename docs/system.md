@@ -5,8 +5,8 @@
 
 - [Architecture](#architecture)
 - [AXI4-Lite Control Plane](#axi4-lite-control-plane)
-- [ISA](#isa)
 - [Programming Model](#programming-model)
+ - ISA (see docs/isa.md)
 
 This section documents the architecture, programming model, and instruction set of the TPU accelerator. The system consists of a DMA, an AXI-Lite control interface, and a custom ISA executed by on-chip compute engines.
 
@@ -112,81 +112,6 @@ tpu_mode = 2
 addr_ram = 2
 dma_len  = 8
 ```
-
-## ISA
-
-CornellTPU uses a fixed-width instruction format to control on-chip compute engines. Instructions operate on data stored in on-chip memory (BRAM) using a compiler-managed virtual address space.
-
-Two primary instruction classes are supported:
-
-Systolic instructions for matrix-style computation
-
-VPU instructions for element-wise vector operations
-
-All instructions are fetched sequentially from IRAM and executed in program order.
-
-**Instruction Modes**
-
-| MODE Value | Meaning               |
-| ---------: | --------------------- |
-|     0      | VPU instruction       |
-|     1      | Systolic instruction  |
-|     2      | Vadd                  |
-|     3      | Halt                  |
-
-**Note:** Vadd is a simple test compute unit that adds two vectors together. It exists just to test the system and is not used during real operations.
-
-
-
-**Systolic instruction format**
-
-
-| Field    | Bits    | Description                               |
-| -------- | ------- | ----------------------------------------- |
-| MODE     | [63:62] | Must be set to `1` (Systolic instruction) |
-| ADDR_A   | [61:49] | Base address of input matrix A            |
-| ADDR_B   | [48:36] | Base address of input matrix B            |
-| ADDR_OUT | [35:23] | Base address of output matrix             |
-| LEN      | [22:0]  | Number of words to process                |
-
-**Note:** Currently systolic array only does 4x4 matrix operations so len isn't used.
-
-
-**VPU instruction format**
-
-
-| Field      | Bits    | Description                            |
-| ---------- | ------- | -------------------------------------- |
-| MODE       | [63:62] | Must be set to `0` (VPU instruction)   |
-| ADDR_A     | [61:49] | Base address of input vector A         |
-| ADDR_B     | [48:36] | Base address of input vector B         |
-| ADDR_OUT   | [35:23] | Base address of output vector          |
-| ADDR_CONST | [22:10] | Base address of constant element       |
-| OPCODE     | [9:0]   | VPU operation selector                 |
-
-
-**VPU opcodes**
-
-| Opcode | Mnemonic        | Operation                   |
-| -----: | --------------- | --------------------------- |
-|      0 | ADD             | Element-wise addition       |
-|      1 | SUB             | Element-wise subtraction    |
-|      2 | RELU            | Rectified Linear Unit       |
-|      3 | MUL             | Element-wise multiplication |
-|      4 | RELU_DERIVATIVE | ReLU derivative             |
-
-**Note:** Currently each vpu instruction assumes vector length of 1 so to process vectors of longer lengths host side software writes loops to issue multiple instructions. This will eventually be changed to be done on the hardware however.
-
-
----
-
-### Notes
-
-- Unused fields must be written as zero
-- invalid mode values result in undefined behavior
-- Instruction with `MODE = Halt` indicates end of instructions and TPU transitions to IDLE state. All instruction sets must end with a halt instruction.
-- Future instruction classes may be added by extending the `MODE` field.
-
 
 ## Programming Model
 

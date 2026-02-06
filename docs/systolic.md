@@ -8,7 +8,7 @@ The goal of this project is to design, implement, and verify a parameterizable F
 Support variable array sizes via parameters instead of hard-coding a single dimension
 Verify correctness against a software golden model and characterize the performance/behavior of the array under representative matrix workloads.
 
- ## Systolic_wrapper
+ ## MXU (Matrix Unit)
  Systolic wrapper is the top level module that instantiates the systolic array datapath and manages the control logic for it. The systolic wrapper provides a clean interface between the systolic array and the rest of the CornellTPU (i.e. the control unit and the memory system). 
 
  ## Interface
@@ -24,8 +24,8 @@ Verify correctness against a software golden model and characterize the performa
   - rst: Reset signal (pulse high to reset)
 
  To/from control:
-  - start: Pulse high to begin systolic_wrapper operation (begin load->matmul->store sequence)
-  - done: Pulsed high by systolic_wrapper when storing is complete
+  - start: Pulse high to begin mxu operation (begin load->matmul->store sequence)
+  - done: Pulsed high by mxu when storing is complete
   - base_addr_w [ADDRESS_WIDTH - 1 : 0]: Base address in memory of weight matrix. Latched when start is driven high.
   - base_addr_x [ADDRESS_WIDTH - 1 : 0]: Base address in memory of x matrix. Latched when start is driven high.
   - base_addr_out [ADDRESS_WIDTH - 1 : 0]: Base address in memory to store output matrix. Latched when start is driven high.
