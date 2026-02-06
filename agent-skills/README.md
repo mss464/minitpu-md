@@ -26,13 +26,14 @@ agent-skills/
 
 ## Available Skills
 
-| Domain | Skill | Description | Location |
-|--------|-------|-------------|----------|
-| **ASIC** | `synthesize` | Synthesis & Tapeout Flow (OpenROAD) | `asic/synthesize/` |
-| **FPGA** | `deploy` | Vivado Bitstream & IP Packaging | `fpga/deploy/` |
-| **TPU** | `design` | RTL Core Development Rules | `tpu/design/` |
-| **Tests** | `validate` | Verification & Testbench Execution | `tests/validate/` |
-| **Software** | `develop` | Compiler & Runtime Stack work | `software/develop/` |
+| Domain | Skill | Description | Location | Status |
+|--------|-------|-------------|----------|--------|
+| **Ultra96-v2** | `validate` | Build bitstream & run board tests | `ultra96-v2/validate/` | ✅ Active |
+| **ASIC** | `synthesize` | Synthesis & Tapeout Flow (OpenROAD) | `asic/synthesize/` | 🔄 Planned |
+| **FPGA** | `deploy` | Vivado Bitstream & IP Packaging | `fpga/deploy/` | 🔄 Planned |
+| **TPU** | `design` | RTL Core Development Rules | `tpu/design/` | 🔄 Planned |
+| **Tests** | `validate` | Verification & Testbench Execution | `tests/validate/` | 🔄 Planned |
+| **Software** | `develop` | Compiler & Runtime Stack work | `software/develop/` | 🔄 Planned |
 
 ## Resources
 
