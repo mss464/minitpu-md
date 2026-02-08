@@ -37,7 +37,7 @@ async def reset_dut(dut):
 
 
 async def memory_driver(dut, mem):
-    """Memory model - combinational read (address sampled on read_en)."""
+    """Memory model - combinational read (address sampled on read_en) + writeback."""
     last_addr = 0
     while True:
         await RisingEdge(dut.clk)
@@ -46,12 +46,18 @@ async def memory_driver(dut, mem):
         try:
             rd_en = int(dut.mem_read_en.value)
             addr = int(dut.mem_req_addr.value)
+            wr_en = int(dut.mem_write_en.value)
+            wr_data = int(dut.mem_req_data.value)
         except ValueError:
             rd_en = 0
             addr = 0
+            wr_en = 0
+            wr_data = 0
 
         if rd_en:
             last_addr = addr  # Latch address when read request is made
+        if wr_en:
+            mem[addr] = wr_data & 0xFFFFFFFF
 
         # Always output data for the latched address
         dut.mem_resp_data.value = mem.get(last_addr, 0)
@@ -92,10 +98,27 @@ async def run_matmul(dut, mem, w_mat, x_mat):
     for i in range(N):
         for j in range(N):
             idx = i * N + j
-            # Use the OUT_DEBUG generate block for array access (Icarus VPI limitation)
-            raw = int(dut.OUT_DEBUG[idx].out_elem.value)
+            # Prefer OUT_DEBUG when available (Icarus); fall back to out_matrix (Verilator)
+            try:
+                raw = int(dut.OUT_DEBUG[idx].out_elem.value)
+            except AttributeError:
+                raw = int(dut.out_matrix[idx].value)
             out[i, j] = fp32_bits_to_float(raw)
     return out
+
+
+def assert_matrix_close(actual, expected, rtol=1e-3, atol=1e-3):
+    """Compare matrices with NaN/Inf handling."""
+    for i in range(N):
+        for j in range(N):
+            a = actual[i, j]
+            e = expected[i, j]
+            if np.isnan(e):
+                assert np.isnan(a), f"[{i},{j}] expected NaN, got {a}"
+            elif np.isinf(e):
+                assert np.isinf(a) and np.sign(a) == np.sign(e), f"[{i},{j}] expected {e}, got {a}"
+            else:
+                assert abs(a - e) <= max(rtol * max(abs(a), abs(e)), atol), f"[{i},{j}] {a} != {e}"
 
 
 @cocotb.test()
@@ -166,4 +189,141 @@ async def test_multiple_sequential_random(dut):
         x = rng.uniform(-2.0, 2.0, size=(N, N)).astype(float)
         out = await run_matmul(dut, mem, w, x)
         exp = x @ w.T
-        assert np.allclose(out, exp, rtol=1e-3, atol=1e-3), "Sequential run mismatch"
+    assert np.allclose(out, exp, rtol=1e-3, atol=1e-3), "Sequential run mismatch"
+
+
+@cocotb.test()
+async def test_fp32_extremes(dut):
+    """Edge-case FP32 values: max/min/overflow/underflow."""
+    clock = Clock(dut.clk, 10, units="ns")
+    cocotb.start_soon(clock.start())
+
+    mem = {}
+    cocotb.start_soon(memory_driver(dut, mem))
+    await reset_dut(dut)
+
+    max_f = np.float32(np.finfo(np.float32).max)
+    min_n = np.float32(np.finfo(np.float32).tiny)
+    # Craft matrices that will overflow and underflow
+    w = np.array([
+        [max_f, 0, 0, 0],
+        [0, min_n, 0, 0],
+        [0, 0, max_f, 0],
+        [0, 0, 0, min_n],
+    ], dtype=np.float32)
+    x = np.array([
+        [max_f, 0, 0, 0],
+        [0, min_n, 0, 0],
+        [0, 0, max_f, 0],
+        [0, 0, 0, min_n],
+    ], dtype=np.float32)
+
+    out = await run_matmul(dut, mem, w.astype(float), x.astype(float))
+    exp = (x @ w.T).astype(np.float32)
+    assert_matrix_close(out, exp, rtol=1e-2, atol=1e-2)
+
+
+@cocotb.test()
+async def test_back_to_back_start(dut):
+    """Back-to-back start pulses with no idle cycles."""
+    clock = Clock(dut.clk, 10, units="ns")
+    cocotb.start_soon(clock.start())
+
+    mem = {}
+    cocotb.start_soon(memory_driver(dut, mem))
+    await reset_dut(dut)
+
+    rng = np.random.default_rng(99)
+    w1 = rng.uniform(-1.0, 1.0, size=(N, N)).astype(float)
+    x1 = rng.uniform(-1.0, 1.0, size=(N, N)).astype(float)
+    out1 = await run_matmul(dut, mem, w1, x1)
+    exp1 = x1 @ w1.T
+    assert np.allclose(out1, exp1, rtol=1e-3, atol=1e-3), "Run 1 mismatch"
+
+    # Immediately start second run on next cycle after done
+    w2 = rng.uniform(-1.0, 1.0, size=(N, N)).astype(float)
+    x2 = rng.uniform(-1.0, 1.0, size=(N, N)).astype(float)
+    load_matrices(mem, BASE_ADDR_W, BASE_ADDR_X, w2, x2)
+    dut.start.value = 1
+    await RisingEdge(dut.clk)
+    dut.start.value = 0
+
+    for _ in range(TIMEOUT_CYCLES):
+        await RisingEdge(dut.clk)
+        if int(dut.done.value):
+            break
+    else:
+        raise cocotb.result.TestFailure("Timeout waiting for done (run2)")
+
+    await RisingEdge(dut.clk)
+    out2 = np.zeros((N, N), dtype=float)
+    for i in range(N):
+        for j in range(N):
+            idx = i * N + j
+            try:
+                raw = int(dut.OUT_DEBUG[idx].out_elem.value)
+            except AttributeError:
+                raw = int(dut.out_matrix[idx].value)
+            out2[i, j] = fp32_bits_to_float(raw)
+    exp2 = x2 @ w2.T
+    assert np.allclose(out2, exp2, rtol=1e-3, atol=1e-3), "Run 2 mismatch"
+
+
+@cocotb.test()
+async def test_row_column_boundary(dut):
+    """Single-element activations to validate boundary propagation."""
+    clock = Clock(dut.clk, 10, units="ns")
+    cocotb.start_soon(clock.start())
+
+    mem = {}
+    cocotb.start_soon(memory_driver(dut, mem))
+    await reset_dut(dut)
+
+    w = np.eye(N, dtype=float)
+    x = np.zeros((N, N), dtype=float)
+    x[0, 0] = 1.0
+    x[N - 1, N - 1] = -2.0
+    out = await run_matmul(dut, mem, w, x)
+    exp = x @ w.T
+    assert np.allclose(out, exp, rtol=1e-5, atol=1e-5), "Boundary propagation mismatch"
+
+
+@cocotb.test()
+async def test_base_addr_aliasing_writeback(dut):
+    """Alias OUT over W and verify writeback occurs (diagnostic)."""
+    clock = Clock(dut.clk, 10, units="ns")
+    cocotb.start_soon(clock.start())
+
+    mem = {}
+    cocotb.start_soon(memory_driver(dut, mem))
+    await reset_dut(dut)
+
+    rng = np.random.default_rng(202)
+    w = rng.uniform(-1.0, 1.0, size=(N, N)).astype(float)
+    x = rng.uniform(-1.0, 1.0, size=(N, N)).astype(float)
+    load_matrices(mem, BASE_ADDR_W, BASE_ADDR_X, w, x)
+
+    # Alias OUT with W
+    dut.base_addr_w.value = BASE_ADDR_W
+    dut.base_addr_x.value = BASE_ADDR_X
+    dut.base_addr_out.value = BASE_ADDR_W
+
+    dut.start.value = 1
+    await RisingEdge(dut.clk)
+    dut.start.value = 0
+
+    for _ in range(TIMEOUT_CYCLES):
+        await RisingEdge(dut.clk)
+        if int(dut.done.value):
+            break
+    else:
+        raise cocotb.result.TestFailure("Timeout waiting for done")
+
+    # Verify that at least one weight location was overwritten by output
+    exp = (x @ w.T).flatten()
+    changed = 0
+    for i in range(N * N):
+        if mem.get(BASE_ADDR_W + i, 0) != float_to_fp32_bits(exp[i]):
+            continue
+        changed += 1
+    assert changed > 0, "Expected writeback to overlap W region but saw no changes"

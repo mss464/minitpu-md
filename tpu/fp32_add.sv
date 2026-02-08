@@ -9,13 +9,16 @@ module fp32_add #(
 );
 
 logic a_sign, b_sign, result_sign;
-logic [7:0] a_exp, b_exp, larger_exp, exp_diff, result_exp;
+logic [7:0] a_exp, b_exp;
+integer larger_exp_i, exp_diff_i, result_exp_i;
 logic [22:0] a_mant, b_mant;
 logic [23:0] a_mant_ext, b_mant_ext;
 logic [24:0] sum_mant;
 
 logic a_nan, b_nan, a_inf, b_inf, a_zero, b_zero;
 logic normalize_done;
+integer shift;
+logic [24:0] mant_sub;
 integer i;
 
 generate
@@ -36,6 +39,18 @@ generate
         assign b_zero = (b_exp == 8'h00) && (b_mant == 0);
         
         always_comb begin
+            // defaults to avoid latches
+            result = '0;
+            result_sign = 1'b0;
+            a_mant_ext = '0;
+            b_mant_ext = '0;
+            sum_mant = '0;
+            larger_exp_i = 0;
+            exp_diff_i = 0;
+            result_exp_i = 0;
+            normalize_done = 1'b0;
+            shift = 0;
+            mant_sub = '0;
             if (a_nan || b_nan) begin
                 result = 32'h7FC00000;  // NaN
             end
@@ -64,13 +79,13 @@ generate
                 
                 // align exponents
                 if (a_exp >= b_exp) begin
-                    larger_exp = a_exp;
-                    exp_diff = a_exp - b_exp;
-                    b_mant_ext = b_mant_ext >> exp_diff;
+                    larger_exp_i = int'(a_exp);
+                    exp_diff_i = int'(a_exp) - int'(b_exp);
+                    b_mant_ext = b_mant_ext >> exp_diff_i;
                 end else begin
-                    larger_exp = b_exp;
-                    exp_diff = b_exp - a_exp;
-                    a_mant_ext = a_mant_ext >> exp_diff;
+                    larger_exp_i = int'(b_exp);
+                    exp_diff_i = int'(b_exp) - int'(a_exp);
+                    a_mant_ext = a_mant_ext >> exp_diff_i;
                 end
                 
                 // add/sub mantissas
@@ -87,39 +102,60 @@ generate
                     end
                 end
                 
-                result_exp = larger_exp;
-                normalize_done = 1'b0;
-                
-                if (sum_mant[24]) begin
-                    sum_mant = sum_mant >> 1;
-                    result_exp = result_exp + 1;
-                    normalize_done = 1'b1;
-                end 
-                else if (sum_mant[23]) begin
-                    normalize_done = 1'b1;
-                end
-                
-                if (!normalize_done) begin
-                    for (i = 22; i >= 0; i = i - 1) begin
-                        if (sum_mant[i] && !normalize_done) begin
-                            sum_mant = sum_mant << (23 - i);
-                            result_exp = result_exp - (23 - i);
-                            normalize_done = 1'b1;
-                        end
+                // If both inputs are subnormal, keep result subnormal unless it crosses into normal range.
+                if (larger_exp_i == 0) begin
+                    if (sum_mant == 0) begin
+                        result = 32'h00000000;
+                    end
+                    else if (sum_mant[23]) begin
+                        // Promote to smallest normal
+                        result = {result_sign, 8'h01, sum_mant[22:0]};
+                    end
+                    else begin
+                        result = {result_sign, 8'h00, sum_mant[22:0]};
                     end
                 end
-                
-                if (sum_mant == 0) begin
-                    result = 32'h00000000;
-                end
-                else if (result_exp >= 8'hFF) begin
-                    result = {result_sign, 8'hFF, 23'h0}; 
-                end 
-                else if (result_exp == 8'h00) begin
-                    result = {result_sign, 8'h00, 23'h0};
-                end 
                 else begin
-                    result = {result_sign, result_exp, sum_mant[22:0]};
+                    result_exp_i = larger_exp_i;
+                    normalize_done = 1'b0;
+
+                    if (sum_mant[24]) begin
+                        sum_mant = sum_mant >> 1;
+                        result_exp_i = result_exp_i + 1;
+                        normalize_done = 1'b1;
+                    end 
+                    else if (sum_mant[23]) begin
+                        normalize_done = 1'b1;
+                    end
+
+                    if (!normalize_done) begin
+                        for (i = 22; i >= 0; i = i - 1) begin
+                            if (sum_mant[i] && !normalize_done) begin
+                                sum_mant = sum_mant << (23 - i);
+                                result_exp_i = result_exp_i - (23 - i);
+                                normalize_done = 1'b1;
+                            end
+                        end
+                    end
+
+                    if (sum_mant == 0) begin
+                        result = 32'h00000000;
+                    end
+                    else if (result_exp_i >= 255) begin
+                        result = {result_sign, 8'hFF, 23'h0};
+                    end
+                    else if (result_exp_i <= 0) begin
+                        shift = 1 - result_exp_i;
+                        if (shift >= 25) begin
+                            result = {result_sign, 8'h00, 23'h0};
+                        end else begin
+                            mant_sub = sum_mant >> shift;
+                            result = {result_sign, 8'h00, mant_sub[22:0]};
+                        end
+                    end
+                    else begin
+                        result = {result_sign, result_exp_i[7:0], sum_mant[22:0]};
+                    end
                 end
             end
         end

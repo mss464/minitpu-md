@@ -22,8 +22,26 @@ export LIBPYTHON_LOC = $(shell python3 -c "import find_libpython; print(find_lib
 export PYTHONPATH := $(PWD):$(PYTHONPATH)
 export PYGPI_PYTHON_BIN = $(shell which python3)
 
+# cocotb v1.x expects MODULE, v2.x accepts COCOTB_TEST_MODULES.
+# Normalize on MODULE while keeping COCOTB_TEST_MODULES for compatibility.
+COCOTB_MODULE ?= $(COCOTB_TEST_MODULES)
+
 # Iverilog flags
 IVFLAGS = -g2012 -Wall
+
+# Default simulator for normal tests
+SIM ?= iverilog
+
+# Coverage (Verilator + lcov/genhtml)
+VERILATOR = verilator
+VERILATOR_COVERAGE = verilator_coverage
+GENHTML = genhtml
+COCOTB_MAKEFILES = $(shell python3 -c "import cocotb, os; print(os.path.join(os.path.dirname(cocotb.__file__), 'share', 'makefiles'))")
+COCOTB_PYTHONPATH = $(shell python3 -c "import cocotb, os; print(os.path.dirname(os.path.dirname(cocotb.__file__)))")
+COV_DIR = coverage
+COV_INFO = $(COV_DIR)/coverage.info
+COV_HTML = $(COV_DIR)/html
+VERILATOR_ROOT ?= /home/lan64/verilator
 
 #==============================================================================
 # RTL Source Files (grouped by category)
@@ -71,7 +89,7 @@ test_fifo4: $(SIM_BUILD)
 	@echo "=== Running FIFO4 Unit Test ==="
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s fifo4 -s dump $(IVFLAGS) \
 		$(SRC_FIFO) $(WRAPPERS)/dump_fifo4.sv
-	COCOTB_TEST_MODULES=test_fifo4 $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
+	MODULE=test_fifo4 COCOTB_TEST_MODULES=test_fifo4 $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
 	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
 	@mv -f fifo4.vcd $(WAVEFORMS)/ 2>/dev/null || true
 	@echo "=== FIFO4 Test Complete ==="
@@ -81,7 +99,7 @@ test_decoder: $(SIM_BUILD)
 	@echo "=== Running Decoder Unit Test ==="
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s decoder -s dump $(IVFLAGS) \
 		$(SRC_DECODER) $(WRAPPERS)/dump_decoder.sv
-	COCOTB_TEST_MODULES=test_decoder $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
+	MODULE=test_decoder COCOTB_TEST_MODULES=test_decoder $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
 	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
 	@mv -f decoder.vcd $(WAVEFORMS)/ 2>/dev/null || true
 	@echo "=== Decoder Test Complete ==="
@@ -91,7 +109,7 @@ test_isa_decoder: $(SIM_BUILD)
 	@echo "=== Running ISA Decoder Test ==="
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s decoder -s dump $(IVFLAGS) \
 		$(SRC_DECODER) $(WRAPPERS)/dump_decoder.sv
-	COCOTB_TEST_MODULES=test_isa_decoder $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
+	MODULE=test_isa_decoder COCOTB_TEST_MODULES=test_isa_decoder $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
 	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
 	@mv -f decoder.vcd $(WAVEFORMS)/ 2>/dev/null || true
 	@echo "=== ISA Decoder Test Complete ==="
@@ -100,7 +118,7 @@ test_isa_decoder: $(SIM_BUILD)
 test_systolic_wrapper: $(SIM_BUILD)
 	@echo "=== Running Systolic Sequential Test ==="
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s systolic_wrapper $(IVFLAGS) $(SRC_SYSTOLIC_WRAPPER)
-	COCOTB_TEST_MODULES=test_systolic_wrapper $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
+	MODULE=test_systolic_wrapper COCOTB_TEST_MODULES=test_systolic_wrapper $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
 	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
 	@echo "=== Systolic Sequential Test Complete ==="
 
@@ -109,7 +127,7 @@ test_pc: $(SIM_BUILD)
 	@echo "=== Running PC Unit Test ==="
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s pc -s dump $(IVFLAGS) \
 		$(SRC_PC) $(WRAPPERS)/dump_pc.sv
-	COCOTB_TEST_MODULES=test_pc $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
+	MODULE=test_pc COCOTB_TEST_MODULES=test_pc $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
 	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
 	@mv -f pc.vcd $(WAVEFORMS)/ 2>/dev/null || true
 	@echo "=== PC Test Complete ==="
@@ -119,7 +137,7 @@ test_vadd: $(SIM_BUILD)
 	@echo "=== Running VADD Unit Test ==="
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s vadd -s dump $(IVFLAGS) \
 		$(SRC_VADD) $(WRAPPERS)/dump_vadd.sv
-	COCOTB_TEST_MODULES=test_vadd $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
+	MODULE=test_vadd COCOTB_TEST_MODULES=test_vadd $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
 	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
 	@mv -f vadd.vcd $(WAVEFORMS)/ 2>/dev/null || true
 	@echo "=== VADD Test Complete ==="
@@ -129,7 +147,7 @@ test_fp32_add: $(SIM_BUILD)
 	@echo "=== Running FP32 Add Unit Test ==="
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s fp32_add -s dump $(IVFLAGS) \
 		$(SRC_FP32) $(WRAPPERS)/dump_fp32_add.sv
-	COCOTB_TEST_MODULES=test_fp32_add $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
+	MODULE=test_fp32_add COCOTB_TEST_MODULES=test_fp32_add $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
 	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
 	@mv -f fp32_add.vcd $(WAVEFORMS)/ 2>/dev/null || true
 	@echo "=== FP32 Add Test Complete ==="
@@ -139,7 +157,7 @@ test_fp32_mul: $(SIM_BUILD)
 	@echo "=== Running FP32 Mul Unit Test ==="
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s fp32_mul -s dump $(IVFLAGS) \
 		$(SRC_FP32) $(WRAPPERS)/dump_fp32_mul.sv
-	COCOTB_TEST_MODULES=test_fp32_mul $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
+	MODULE=test_fp32_mul COCOTB_TEST_MODULES=test_fp32_mul $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
 	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
 	@mv -f fp32_mul.vcd $(WAVEFORMS)/ 2>/dev/null || true
 	@echo "=== FP32 Mul Test Complete ==="
@@ -148,7 +166,7 @@ test_fp32_mul: $(SIM_BUILD)
 test_pe: $(SIM_BUILD)
 	@echo "=== Running PE Unit Test ==="
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s pe $(IVFLAGS) $(SRC_PE)
-	COCOTB_TEST_MODULES=test_pe $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
+	MODULE=test_pe COCOTB_TEST_MODULES=test_pe $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
 	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
 	@echo "=== PE Test Complete ==="
 
@@ -159,11 +177,15 @@ test_vpu_op: $(SIM_BUILD)
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s vpu_op -s dump $(IVFLAGS) \
 		$(SRC_VPU_OP) $(WRAPPERS)/dump_vpu_op.sv || \
 		echo "Warning: vpu_op has dependencies that may need resolution"
+	MODULE=test_vpu_op COCOTB_TEST_MODULES=test_vpu_op $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
+	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
+	@mv -f vpu_op.vcd $(WAVEFORMS)/ 2>/dev/null || true
+	@echo "=== VPU Op Test Complete ==="
 
 test_systolic_array: $(SIM_BUILD)
 	@echo "=== Running Random Systolic Test ==="
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s systolic $(IVFLAGS) $(SRC_SYSTOLIC)
-	COCOTB_TEST_MODULES=test_systolic_array $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
+	MODULE=test_systolic_array COCOTB_TEST_MODULES=test_systolic_array $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
 	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
 
 #==============================================================================
@@ -171,14 +193,14 @@ test_systolic_array: $(SIM_BUILD)
 #==============================================================================
 
 # Core unit tests (fast, independent modules)
-test_unit: test_fifo4 test_decoder test_pc test_vadd test_fp32_add test_fp32_mul
+test_unit: test_fifo4 test_decoder test_pc test_vadd test_fp32_add test_fp32_mul test_isa_decoder
 	@echo ""
 	@echo "========================================"
 	@echo "All unit tests completed successfully!"
 	@echo "========================================"
 
 # PE and systolic tests
-test_compute: test_pe test_systolic_array test_systolic_wrapper
+test_compute: test_pe test_systolic_array test_systolic_wrapper test_vpu_op
 	@echo ""
 	@echo "========================================"
 	@echo "All compute tests completed successfully!"
@@ -204,6 +226,62 @@ test_all: test_unit test_compute test_wrappers
 	@echo "========================================"
 	@echo "COMPREHENSIVE TEST SUITE PASSED"
 	@echo "========================================"
+
+#==============================================================================
+# Coverage (Verilator) - ALL tests
+#==============================================================================
+
+define RUN_COV
+	@rm -f coverage.dat
+	@$(MAKE) -f $(COCOTB_MAKEFILES)/Makefile.sim \
+		SIM=verilator TOPLEVEL_LANG=verilog \
+		TOPLEVEL=$(1) MODULE=$(2) \
+		VERILOG_SOURCES="$(3)" \
+		SIM_BUILD="$(COV_DIR)/build/$(2)" \
+		VERILATOR_ROOT="$(VERILATOR_ROOT)" \
+		VERILATOR_BIN_DIR="$(VERILATOR_ROOT)/bin" \
+		EXTRA_ARGS="--coverage --coverage-line --coverage-toggle" \
+		VERILATOR_INCLUDER="env -u PYTHONHOME -u PYTHONPATH -u PYTHONNOUSERSITE /usr/bin/python3 $(VERILATOR_ROOT)/bin/verilator_includer" \
+		PYTHON3=/usr/bin/python3 \
+		PYTHONPATH="$(COCOTB_PYTHONPATH)" PYTHONNOUSERSITE=1 \
+		COCOTB_CONFIG="/usr/bin/python3 -m cocotb.config" \
+		LC_ALL=C.UTF-8 LANG=C.UTF-8 \
+		VERILATOR_COVERAGE=1
+	@mkdir -p $(COV_DIR)
+	@if [ -f coverage.dat ]; then \
+		mv coverage.dat $(COV_DIR)/$(2).dat; \
+	else \
+		echo "No coverage.dat generated for $(2)."; exit 1; \
+	fi
+endef
+
+coverage_reports:
+	@mkdir -p $(COV_DIR)
+	@rm -rf $(COV_DIR)/build
+	$(call RUN_COV,fifo4,test_fifo4,$(SRC_FIFO))
+	$(call RUN_COV,decoder,test_decoder,$(SRC_DECODER))
+	$(call RUN_COV,decoder,test_isa_decoder,$(SRC_DECODER))
+	$(call RUN_COV,pc,test_pc,$(SRC_PC))
+	$(call RUN_COV,vadd,test_vadd,$(SRC_VADD))
+	$(call RUN_COV,fp32_add,test_fp32_add,$(SRC_FP32))
+	$(call RUN_COV,fp32_mul,test_fp32_mul,$(SRC_FP32))
+	$(call RUN_COV,pe,test_pe,$(SRC_PE))
+	$(call RUN_COV,vpu_op,test_vpu_op,$(SRC_VPU_OP))
+	$(call RUN_COV,systolic,test_systolic_array,$(SRC_SYSTOLIC))
+	$(call RUN_COV,systolic_wrapper,test_systolic_wrapper,$(SRC_SYSTOLIC_WRAPPER))
+	@echo "=== Merging coverage data ==="
+	@COV_DAT=$$(find $(COV_DIR) -name '*.dat' -print); \
+	if [ -z "$$COV_DAT" ]; then \
+		echo "No coverage data files found. Did Verilator run?"; exit 1; \
+	fi; \
+	$(VERILATOR_COVERAGE) --write-info $(COV_INFO) $$COV_DAT
+	@echo "=== Generating HTML report ==="
+	@env -i PATH=/usr/bin:/bin HOME="$$HOME" LANG=C.UTF-8 \
+		$(GENHTML) $(COV_INFO) --output-directory $(COV_HTML)
+	@echo "Coverage HTML: $(COV_HTML)/index.html"
+
+# Backward-compatible alias
+coverage_all: coverage_reports
 
 #==============================================================================
 # Infrastructure
@@ -233,6 +311,9 @@ clean:
 # Deep clean (includes pycache)
 distclean: clean
 	rm -rf __pycache__ .pytest_cache
+
+# Align with c2s2 style
+clean_all: distclean
 
 # Help
 help:
