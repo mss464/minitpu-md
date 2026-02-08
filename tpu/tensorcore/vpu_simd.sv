@@ -140,7 +140,7 @@ module vpu_simd #(
                 .start(1'b1),
                 .operand0(rf_rd_data_a[i]),
                 .operand1(operand_b_lane),
-                .opcode({7'b0, vpu_opcode}),  // Zero-extend to 10 bits
+                .opcode(vpu_opcode),
                 .result_out(alu_result[i])
             );
         end
@@ -151,6 +151,7 @@ module vpu_simd #(
 
     // Saved instruction fields for multi-cycle operations
     logic [12:0] saved_addr_a;
+    logic [12:0] saved_addr_out;
     logic [2:0] saved_vreg_dst, saved_vreg_a;
 
     // FSM
@@ -170,6 +171,7 @@ module vpu_simd #(
             done_simd <= 1'b0;
             load_buffer <= '0;
             saved_addr_a <= '0;
+            saved_addr_out <= '0;
             saved_vreg_dst <= '0;
             saved_vreg_a <= '0;
         end else begin
@@ -185,6 +187,7 @@ module vpu_simd #(
                         elem_idx <= '0;
                         // Save instruction fields
                         saved_addr_a <= addr_a;
+                        saved_addr_out <= addr_out;
                         saved_vreg_dst <= vreg_dst;
                         saved_vreg_a <= vreg_a;
 
@@ -210,7 +213,7 @@ module vpu_simd #(
                 VLOAD_REQ: begin
                     bram_en_simd <= 1'b1;
                     bram_we_simd <= 1'b0;
-                    bram_addr_simd <= saved_addr_a + elem_idx;
+                    bram_addr_simd <= saved_addr_a + {{(ADDR_W-4){1'b0}}, elem_idx};
                     state <= VLOAD_WAIT1;
                 end
 
@@ -259,7 +262,7 @@ module vpu_simd #(
                 VSTORE_REQ: begin
                     bram_en_simd <= 1'b1;
                     bram_we_simd <= 1'b1;
-                    bram_addr_simd <= saved_addr_a + elem_idx;
+                    bram_addr_simd <= saved_addr_out + {{(ADDR_W-4){1'b0}}, elem_idx};
                     bram_din_simd <= rf_rd_data_a[elem_idx];
 
                     if (elem_idx < 7) begin
@@ -286,6 +289,9 @@ module vpu_simd #(
                 DONE_STATE: begin
                     done_simd <= 1'b1;
                     bram_en_simd <= 1'b0;
+                    state <= IDLE;
+                end
+                default: begin
                     state <= IDLE;
                 end
             endcase

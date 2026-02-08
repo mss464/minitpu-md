@@ -69,20 +69,21 @@ SRC_VPU = $(TPU_DIR)/vpu.sv $(SRC_VPU_OP)
 
 # VPU SIMD (new)
 SRC_VEC_REGFILE = $(TPU_DIR)/vec_regfile.sv
-SRC_VPU_SIMD = $(TPU_DIR)/vpu_simd.sv $(SRC_VPU_OP) $(SRC_VEC_REGFILE)
+SRC_VPU_SIMD = $(TPU_DIR)/vpu_simd.sv $(SRC_VPU) $(SRC_VEC_REGFILE)
 
 # All sources for comprehensive tests
-SRC_ALL = $(TPU_DIR)/pe.sv \
-          $(TPU_DIR)/systolic.sv \
-          $(TPU_DIR)/mxu.sv \
-          $(TPU_DIR)/fixedpoint.sv \
-          $(TPU_DIR)/fp32_add.sv \
-          $(TPU_DIR)/fp32_mul.sv \
-          $(TPU_DIR)/fifo4.sv \
-          $(TPU_DIR)/pc.sv \
-          $(TPU_DIR)/decoder.sv \
-          $(TPU_DIR)/vadd.sv \
-          $(TPU_DIR)/vpu_op.sv
+SRC_ALL = $(SRC_PE) \
+          $(SRC_SYSTOLIC) \
+          $(SRC_MXU) \
+          $(SRC_FIXEDPOINT) \
+          $(SRC_FP32) \
+          $(SRC_FIFO) \
+          $(SRC_PC) \
+          $(SRC_DECODER) \
+          $(SRC_VADD) \
+          $(SRC_VPU_OP) \
+          $(SRC_VEC_REGFILE) \
+          $(SRC_VPU_SIMD)
 
 #==============================================================================
 # Test Targets - Unit Tests for Individual Modules
@@ -206,46 +207,6 @@ test_vpu_simd: $(SIM_BUILD)
 	@mv -f vpu_simd.vcd $(WAVEFORMS)/ 2>/dev/null || true
 	@echo "=== SIMD VPU Test Complete ==="
 
-# Vector register file unit test
-test_vec_regfile: $(SIM_BUILD)
-	@echo "=== Running Vector Register File Test ==="
-	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s vec_regfile -s dump $(IVFLAGS) \
-		$(SRC_VEC_REGFILE) $(WRAPPERS)/dump_vec_regfile.sv
-	COCOTB_TEST_MODULES=test_vec_regfile $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
-	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
-	@mv -f vec_regfile.vcd $(WAVEFORMS)/ 2>/dev/null || true
-	@echo "=== Vector Register File Test Complete ==="
-
-# SIMD VPU unit test
-test_vpu_simd: $(SIM_BUILD)
-	@echo "=== Running SIMD VPU Test ==="
-	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s vpu_simd -s dump $(IVFLAGS) \
-		$(SRC_VPU_SIMD) $(WRAPPERS)/dump_vpu_simd.sv
-	COCOTB_TEST_MODULES=test_vpu_simd $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
-	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
-	@mv -f vpu_simd.vcd $(WAVEFORMS)/ 2>/dev/null || true
-	@echo "=== SIMD VPU Test Complete ==="
-
-# Vector register file unit test
-test_vec_regfile: $(SIM_BUILD)
-	@echo "=== Running Vector Register File Test ==="
-	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s vec_regfile -s dump $(IVFLAGS) \
-		$(SRC_VEC_REGFILE) $(WRAPPERS)/dump_vec_regfile.sv
-	COCOTB_TEST_MODULES=test_vec_regfile $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
-	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
-	@mv -f vec_regfile.vcd $(WAVEFORMS)/ 2>/dev/null || true
-	@echo "=== Vector Register File Test Complete ==="
-
-# SIMD VPU unit test
-test_vpu_simd: $(SIM_BUILD)
-	@echo "=== Running SIMD VPU Test ==="
-	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s vpu_simd -s dump $(IVFLAGS) \
-		$(SRC_VPU_SIMD) $(WRAPPERS)/dump_vpu_simd.sv
-	COCOTB_TEST_MODULES=test_vpu_simd $(VVP) -M $(COCOTB_LIBS) -m libcocotbvpi_icarus $(SIM_BUILD)/sim.vvp
-	@! grep -q 'failure' results.xml || (echo "TEST FAILED" && exit 1)
-	@mv -f vpu_simd.vcd $(WAVEFORMS)/ 2>/dev/null || true
-	@echo "=== SIMD VPU Test Complete ==="
-
 test_systolic_array: $(SIM_BUILD)
 	@echo "=== Running Random Systolic Test ==="
 	$(IVERILOG) -o $(SIM_BUILD)/sim.vvp -s systolic $(IVFLAGS) $(SRC_SYSTOLIC)
@@ -257,14 +218,14 @@ test_systolic_array: $(SIM_BUILD)
 #==============================================================================
 
 # Core unit tests (fast, independent modules)
-test_unit: test_fifo4 test_decoder test_pc test_vadd test_fp32_add test_fp32_mul test_isa_decoder
+test_unit: test_fifo4 test_decoder test_pc test_vadd test_fp32_add test_fp32_mul test_isa_decoder test_vec_regfile test_vpu_simd
 	@echo ""
 	@echo "========================================"
 	@echo "All unit tests completed successfully!"
 	@echo "========================================"
 
 # PE and systolic tests
-test_compute: test_pe test_systolic_array test_systolic_wrapper
+test_compute: test_pe test_systolic_array
 	@echo ""
 	@echo "========================================"
 	@echo "All compute tests completed successfully!"
@@ -331,8 +292,9 @@ coverage_reports:
 	$(call RUN_COV,fp32_mul,test_fp32_mul,$(SRC_FP32))
 	$(call RUN_COV,pe,test_pe,$(SRC_PE))
 	$(call RUN_COV,vpu_op,test_vpu_op,$(SRC_VPU_OP))
+	$(call RUN_COV,vec_regfile,test_vec_regfile,$(SRC_VEC_REGFILE))
+	$(call RUN_COV,vpu_simd,test_vpu_simd,$(SRC_VPU_SIMD))
 	$(call RUN_COV,systolic,test_systolic_array,$(SRC_SYSTOLIC))
-	$(call RUN_COV,systolic_wrapper,test_systolic_wrapper,$(SRC_SYSTOLIC_WRAPPER))
 	$(call RUN_COV,mxu,test_mxu,$(SRC_MXU))
 	
 	@echo "=== Merging coverage data ==="
@@ -392,6 +354,8 @@ help:
 	@echo "  make test_vadd        - Vector add test"
 	@echo "  make test_fp32_add    - FP32 adder test"
 	@echo "  make test_fp32_mul    - FP32 multiplier test"
+	@echo "  make test_vec_regfile - Vector register file test"
+	@echo "  make test_vpu_simd    - SIMD VPU test"
 	@echo "  make test_pe          - Processing element test"
 	@echo "  make test_systolic_array     - Systolic array random test (100 cases)"
 	@echo "  make test_mxu             - MXU (matrix unit) sequential test"
@@ -411,4 +375,4 @@ help:
 .PHONY: all clean distclean lint lint_verible help
 .PHONY: test_unit test_compute test_wrappers test_all
 .PHONY: test_fifo4 test_decoder test_pc test_vadd test_fp32_add test_fp32_mul
-.PHONY: test_pe test_systolic_array test_vpu_op test_isa_decoder test_mxu
+.PHONY: test_vec_regfile test_vpu_simd test_pe test_systolic_array test_vpu_op test_isa_decoder test_mxu

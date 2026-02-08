@@ -15,10 +15,20 @@ reg [49:0] product;
 reg guard_bit, round_bit, sticky;
 
 always @(*) begin
+    // Default assignments to avoid latches
+    result = 32'h0;
+    z_s = 1'b0;
+    z_e = 10'sd0;
+    product = 50'd0;
+    z_m = 24'd0;
+    guard_bit = 1'b0;
+    round_bit = 1'b0;
+    sticky = 1'b0;
+
     a_m = {1'b0, a[22:0]};
     b_m = {1'b0, b[22:0]};
-    a_e = a[30:23] - 127;
-    b_e = b[30:23] - 127;
+    a_e = {2'b00, a[30:23]} - 10'sd127;
+    b_e = {2'b00, b[30:23]} - 10'sd127;
     a_s = a[31];
     b_s = b[31];
     

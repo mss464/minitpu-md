@@ -11,11 +11,11 @@ module vpu_op #(
 );
 
 // localparams for states
-localparam ADD = 4'd0;
-localparam SUB = 4'd1;
-localparam RELU = 4'd2;
-localparam MUL = 4'd3;
-localparam D_RELU = 4'd4; // relu deriv for backward pass
+localparam logic [OP_W-1:0] ADD = OP_W'(0);
+localparam logic [OP_W-1:0] SUB = OP_W'(1);
+localparam logic [OP_W-1:0] RELU = OP_W'(2);
+localparam logic [OP_W-1:0] MUL = OP_W'(3);
+localparam logic [OP_W-1:0] D_RELU = OP_W'(4); // relu deriv for backward pass
 
 // internal signalas for computation result storing
 logic [DATA_W-1:0] result;

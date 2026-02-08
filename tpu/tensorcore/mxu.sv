@@ -60,6 +60,8 @@ module mxu #(
 
     // Index for load progress (indexes loading beats)
     logic [5:0] load_idx;  // Changed from integer for better synthesis/sim compatibility
+    wire [ADDRESS_WIDTH-1:0] load_idx_addr =
+        {{(ADDRESS_WIDTH-$bits(load_idx)){1'b0}}, load_idx};
 
     // Timer for memory fixed latency
     logic [$clog2(MEM_LATENCY+1)-1:0] mem_latency_timer;
@@ -259,7 +261,7 @@ module mxu #(
                 end
 
                 S_LOAD_W_REQ: begin
-                    mem_req_addr <= base_addr_w_reg + (load_idx);
+                    mem_req_addr <= base_addr_w_reg + load_idx_addr;
                     mem_read_en <= 1;
                     mem_latency_timer <= '0;
                     state <= S_LOAD_W_WAIT;
@@ -274,7 +276,7 @@ module mxu #(
                                 weight_matrix[flat_index] <= mem_resp_data[b*DATA_WIDTH +: DATA_WIDTH];
                             end
                         end
-                        if ((load_idx + 1) * BANKING_FACTOR >= TOTAL_ELEMS) begin
+                        if ((int'(load_idx) + 1) * BANKING_FACTOR >= TOTAL_ELEMS) begin
                             load_idx <= '0;
                             state <= S_LOAD_X_REQ;
                         end else begin
@@ -287,7 +289,7 @@ module mxu #(
                 end
 
                 S_LOAD_X_REQ: begin
-                    mem_req_addr <= base_addr_x_reg + (load_idx);
+                    mem_req_addr <= base_addr_x_reg + load_idx_addr;
                     mem_read_en <= 1;
                     mem_latency_timer <= '0;
                     state <= S_LOAD_X_WAIT;
@@ -302,7 +304,7 @@ module mxu #(
                                 x_matrix[flat_index] <= mem_resp_data[b*DATA_WIDTH +: DATA_WIDTH];
                             end
                         end
-                        if ((load_idx + 1) * BANKING_FACTOR >= TOTAL_ELEMS) begin
+                        if ((int'(load_idx) + 1) * BANKING_FACTOR >= TOTAL_ELEMS) begin
                             load_idx <= '0;
                             phase_counter <= '0;
                             state <= S_RUN;
@@ -354,7 +356,7 @@ module mxu #(
                     // Each PE row gets a different column of X
                     for (int row = 0; row < N; row++) begin
                         int ph;
-                        ph = phase_counter - (N + row);
+                        ph = int'(phase_counter) - (N + row);
                         if (ph >= 0 && ph < N) begin
                             case (row)
                                 0: begin sys_start_1 <= 1; sys_data_in_11 <= x_matrix[(ph*N + 0)]; end
@@ -382,7 +384,7 @@ module mxu #(
                 end
 
                 S_STORE_REQ: begin
-                    mem_req_addr <= base_addr_out_reg + (load_idx);
+                    mem_req_addr <= base_addr_out_reg + load_idx_addr;
 
                     for (int b = 0; b < BANKING_FACTOR; b++) begin
                         int flat_index;
@@ -400,7 +402,7 @@ module mxu #(
 
                 S_STORE_WAIT: begin
                     if (mem_latency_timer >= (MEM_LATENCY - 1)) begin
-                        if ((load_idx + 1) * BANKING_FACTOR >= TOTAL_ELEMS) begin
+                        if ((int'(load_idx) + 1) * BANKING_FACTOR >= TOTAL_ELEMS) begin
                             state <= S_DONE;
                         end else begin
                             load_idx <= load_idx + 1;
@@ -414,6 +416,12 @@ module mxu #(
                 S_DONE: begin
                     done <= 1;
                     load_idx <= 0;
+                    state <= S_IDLE;
+                end
+                default: begin
+                    done <= 0;
+                    mem_read_en <= 0;
+                    mem_write_en <= 0;
                     state <= S_IDLE;
                 end
 

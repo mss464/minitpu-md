@@ -129,6 +129,7 @@ async def test_vload_sequential(dut):
     # Simulate BRAM reads over multiple cycles
     cycle_count = 0
     read_count = 0
+    last_addr = None
     while cycle_count < 100:
         await RisingEdge(dut.clk)
 
@@ -137,7 +138,9 @@ async def test_vload_sequential(dut):
             addr = int(dut.bram_addr.value)
             if addr in bram:
                 dut.bram_dout.value = bram[addr]
-                read_count += 1
+                if addr != last_addr:
+                    read_count += 1
+                    last_addr = addr
 
         if int(dut.done.value) == 1:
             break
