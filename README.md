@@ -5,17 +5,22 @@ A compact ML stack built by Cornell students, taking a bottom-up approach from a
 ## Project Structure
 ```text
 mini-tpu/
-├── agent-skills/       # Agentic workflows (fpga, asic, deploy)
-├── asic/               # ASIC Synthesis (OpenLane/TinyTapeout)
+├── tpu/                # TPU Hardware
+|   ├── tensorcore/     # Core RTL (SystemVerilog)
+|   ├── ultra96-v2/     # Ultra96-v2 (Pynq FPGA) specific RTL and build scripts
+|   ├── v80/            # V80 (PCIe FPGA) specific RTL and build scripts
+|   ├── u280/           # U280 (PCIe FPGA) specific RTL and build scripts
+|   ├── asic/           # TinyTapeoutASIC-specific source and build scripts
+|   └── allo-tpu/       # TPU design in a high-level language Allo
 ├── compiler/           # Compiler & Runtime
 │   ├── hal/            # Hardware Abstraction Layer (PYNQ, Sim)
 │   └── runtime/        # Execution Runtime & Allocators
-├── docs/               # Documentation
-├── fpga/               # FPGA Synthesis (Vivado)
+├── docs/               # Design Contracts and Documentation
 ├── tests/              # Verification
-│   └── fpga/           # FPGA board tests
+│   ├── tensorcore/     # RTL simulation tests
+│   └── ultra96-v2/     # Ultra96-v2 FPGA board deployment tests
 ├── torch/              # PyTorch Frontend
-└── tpu/                # Core RTL (SystemVerilog)
+└── agent-skills/       # Agentic workflows
 ```
 
 ## Architecture Overview
@@ -28,17 +33,17 @@ The design follows a **two-tier architecture** separating portable compute logic
 │  (Platform-specific: fpga/ or asic/)                                     │
 │                                                                          │
 │   FPGA (fpga/):                      ASIC (asic/):                       │
-│   ├─ Xilinx AXI DMA IP               ├─ tpu_core.sv (valid/ready I/O)    │
+│   ├─ Xilinx AXI DMA IP               ├─ tensorcore.sv (valid/ready I/O)    │
 │   ├─ Zynq PS (hard processor)        ├─ SPI bridge (Tiny Tapeout)        │
 │   └─ Block design integration        └─ Blackboxed SRAMs                 │
 └────────────────────────────┬────────────────────────────────────────────┘
                              │
                              ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                         TPU Core Layer (tpu/)                            │
+│                         TensorCore Layer (tpu/TensorCore/)                            │
 │  (Portable: vendor-agnostic SystemVerilog)                               │
 │                                                                          │
-│   ├─ tpu_top_v6.sv      # Top wrapper with AXI interfaces (hand-coded)  │
+│   ├─ tpu.sv         # Top wrapper with AXI interfaces (hand-coded)  │
 │   ├─ compute_core.sv    # Systolic + VPU control                        │
 │   ├─ systolic.sv        # 8x8 weight-stationary array                   │
 │   ├─ mem_wrapper.sv     # Portable BRAM (ifdef FPGA/ASIC)               │
@@ -57,10 +62,10 @@ The design follows a **two-tier architecture** separating portable compute logic
 | **DMA Engine** | Xilinx `axi_dma` IP | Not used (direct FIFO interface) |
 | **Host Interface** | Zynq PS via AXI | GPIO/SPI bridge |
 | **Memory** | Inferred BRAM/URAM | Blackboxed SRAM macros |
-| **Top Wrapper** | `tpu_top_v6.sv` | `tpu_core.sv` |
+| **Top Wrapper** | `tpu.sv` | `tensorcore.sv` |
 
 > [!IMPORTANT]
-> The `tpu/` directory contains AXI interface *implementations* in RTL, but the **DMA controller** that drives them is a Xilinx IP instantiated in `fpga/`. For ASIC, `asic/tpu_core.sv` replaces AXI-Stream with simple valid/ready handshaking.
+> The `tpu/` directory contains AXI interface *implementations* in RTL, but the **DMA controller** that drives them is a Xilinx IP instantiated in `fpga/`. For ASIC, `asic/tensorcore.sv` replaces AXI-Stream with simple valid/ready handshaking.
 
 ## Pending Decisions
 

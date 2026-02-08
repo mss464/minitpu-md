@@ -15,3 +15,5 @@ fpga/build.log
 *.vcd
 *.zip
 .DS_Store
+
+*__pycache__*

@@ -2,9 +2,9 @@
 
 The memory subsystem provides a **software-managed scratchpad memory** for the CornellTPU. It is built around a **true dual-port BRAM** and provides a clean interface between external memory (via DMA-style streams) and on-chip compute units (e.g., vector engines and the systolic array). All computation operates exclusively on data resident in BRAM.
 
-# bram_top
+# scratchpad
 
-`bram_top` is the top-level memory module that instantiates a **true dual-port BRAM** and manages address generation for DMA-side and compute-side accesses. The memory subsystem provides a clean interface between external memory transfers and accelerator compute.
+`scratchpad` is the top-level memory module that instantiates a **true dual-port BRAM** and manages address generation for DMA-side and compute-side accesses. The memory subsystem provides a clean interface between external memory transfers and accelerator compute.
 
 ## Interface
 
@@ -36,7 +36,7 @@ bram_addr = base_addr + pointer
 
 ### To/from Compute (Port B)
 
-Used by compute units such as `compute_top` and the systolic array.
+Used by compute units such as `dummy_unit` and the systolic array.
 
 
 - `dma_comp_addr_b [ADDR_WIDTH-1:0]`: BRAM address for compute access
@@ -47,9 +47,9 @@ Used by compute units such as `compute_top` and the systolic array.
 
 Port B provides single-cycle, random-access reads and writes and operates independently of DMA traffic.
 
-# compute_top
+# dummy_unit
 
-`compute_top` is a compute controller that demonstrates how compute kernels interact with the memory subsystem. It operates entirely on BRAM-resident data and has no direct access to external memory.
+`dummy_unit` is a compute controller that demonstrates how compute kernels interact with the memory subsystem. It operates entirely on BRAM-resident data and has no direct access to external memory.
 
 ## Interface
 

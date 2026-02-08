@@ -36,23 +36,46 @@ class TpuMode:
 
 class TpuDriver:
     """Driver class for Mini-TPU hardware interface."""
-    
-    def __init__(self, bitstream_path: str):
+
+    def __init__(self, bitstream_path: str, tpu_name: str = None, dma_name: str = None):
         """
         Initialize TPU driver with the specified bitstream.
-        
+
         Args:
             bitstream_path: Path to .bit file (expects .hwh in same directory)
+            tpu_name: Name of TPU IP block (auto-detect if None)
+            dma_name: Name of DMA IP block (auto-detect if None)
         """
         if Overlay is None:
             raise RuntimeError("pynq library not available - must run on PYNQ board")
-        
+
         self.overlay = Overlay(bitstream_path)
         self.overlay.download()
-        
-        self.dma = self.overlay.axi_dma_0
-        self.ctrl = self.overlay.tpu_top_v6_0
+
+        # Auto-detect or use provided names
+        if dma_name is None:
+            # Try common DMA names
+            for name in ['axi_dma_0', 'axi_dma']:
+                if hasattr(self.overlay, name):
+                    dma_name = name
+                    break
+            if dma_name is None:
+                raise RuntimeError(f"Could not find DMA. Available IPs: {list(self.overlay.ip_dict.keys())}")
+
+        if tpu_name is None:
+            # Try common TPU names
+            for name in ['tpu_0', 'tpu_top_0', 'tpu']:
+                if hasattr(self.overlay, name):
+                    tpu_name = name
+                    break
+            if tpu_name is None:
+                raise RuntimeError(f"Could not find TPU. Available IPs: {list(self.overlay.ip_dict.keys())}")
+
+        self.dma = getattr(self.overlay, dma_name)
+        self.ctrl = getattr(self.overlay, tpu_name)
         self.mmio = self.ctrl.mmio
+
+        print(f"TPU Driver initialized: DMA={dma_name}, TPU={tpu_name}")
     
     def wait_for_flag(self, name: str, expected: int = 1, poll_delay: float = 0.001):
         """Wait for a TPU status flag to reach expected value."""
