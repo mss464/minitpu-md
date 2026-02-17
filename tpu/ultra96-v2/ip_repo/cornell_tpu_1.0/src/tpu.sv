@@ -206,8 +206,9 @@
     
     // BRAM to compute interface wires (port b)
     wire [12:0] comp_addr_b;
-    wire [31:0] comp_din_b, comp_dout_b;
-    wire        comp_en_b, comp_we_b;
+    wire [255:0] comp_din_b, comp_dout_b;
+    wire        comp_en_b; 
+    wire [7:0]  comp_we_b;
     wire pc_enable;
     reg pc_load;
     reg [7:0] pc_load_val;
@@ -358,7 +359,8 @@
     //  Instantiate submodules
     scratchpad #(
         .ADDR_WIDTH(13),
-        .DATA_WIDTH(32)
+        .DATA_WIDTH(32),
+        .NUM_BANKS(8)
     ) u_scratchpad (
         .clk(s00_axi_aclk),
         .rst_n(s00_axi_aresetn),
@@ -386,6 +388,7 @@
     compute_core #(
     .ADDR_WIDTH(13),
     .DATA_WIDTH(32),
+    .NUM_BANKS(8),
     .VPU_DATA_W(32),
     .VPU_ADDR_W(13),
     .VPU_OP_W(10),

@@ -1,108 +1,53 @@
 ################################################################################
-# package_tpu_ip.tcl
+# package_tpu_ip.tcl  (FIXED - copy-first approach)
 #
-# Packages the tpu RTL into a reusable custom IP with:
-#   - AXI4-Lite slave interface (s00_axi)
-#   - AXI-Stream slave interface (s00_axis)
-#   - AXI-Stream master interface (m00_axis)
-#   - Embedded blk_mem_gen_1 BRAM IP (generated locally to avoid black-box)
+# Strategy: physically copy ALL RTL files into ip_out_dir/src/ BEFORE calling
+# ipx::package_project. This eliminates both:
+#   (a) "outside project area" CRITICAL WARNINGs  (files are now inside)
+#   (b) "unreferenced file not packaged" WARNINGs (all files are in src/)
 #
 # Usage:
-#   vivado -mode batch -source scripts/package_tpu_ip.tcl -tclargs \
-#       -ip_name cornell_tpu \
-#       -part xczu3eg-sbva484-1-i \
-#       -rtl_dir tpu \
-#       -repo_out ip_repo
+#   vivado -mode batch -source ultra96-v2/package_tpu_ip.tcl -tclargs \
+#       -ip_name cornell_tpu -part xczu3eg-sbva484-1-i \
+#       -rtl_dir tensorcore -rtl_dir ultra96-v2/rtl \
+#       -repo_out ultra96-v2/ip_repo
 ################################################################################
 
-# Default values
-set ip_name     "cornell_tpu"
-set part        "xczu3eg-sbva484-1-i"
-set rtl_dirs    {}
-set repo_out    ""
-set ip_version  "1.0"
-set ip_vendor   "cornell.edu"
-set ip_library  "user"
+set ip_name    "cornell_tpu"
+set part       "xczu3eg-sbva484-1-i"
+set rtl_dirs   {}
+set repo_out   ""
+set ip_version "1.0"
+set ip_vendor  "cornell.edu"
+set ip_library "user"
 
-# Parse command line arguments
 proc parse_args {} {
-    global argc argv
-    global ip_name part rtl_dirs repo_out ip_version ip_vendor ip_library
-
+    global argc argv ip_name part rtl_dirs repo_out ip_version ip_vendor ip_library
     for {set i 0} {$i < $argc} {incr i} {
         set arg [lindex $argv $i]
         switch -exact -- $arg {
-            "-ip_name" {
-                incr i
-                set ip_name [lindex $argv $i]
-            }
-            "-part" {
-                incr i
-                set part [lindex $argv $i]
-            }
-            "-rtl_dir" {
-                incr i
-                lappend rtl_dirs [lindex $argv $i]
-            }
-            "-repo_out" {
-                incr i
-                set repo_out [lindex $argv $i]
-            }
-            "-ip_version" {
-                incr i
-                set ip_version [lindex $argv $i]
-            }
-            "-ip_vendor" {
-                incr i
-                set ip_vendor [lindex $argv $i]
-            }
-            "-ip_library" {
-                incr i
-                set ip_library [lindex $argv $i]
-            }
-            "-help" {
-                puts "Usage: vivado -mode batch -source package_tpu_ip.tcl -tclargs <options>"
-                puts "Options:"
-                puts "  -ip_name <name>      IP core name (default: cornell_tpu)"
-                puts "  -part <part>         FPGA part number (default: xczu3eg-sbva484-1-i)"
-                puts "  -rtl_dir <dir>       Directory containing RTL sources (can specify multiple)"
-                puts "  -repo_out <dir>      Output directory for IP repository"
-                puts "  -ip_version <ver>    IP version (default: 1.0)"
-                puts "  -ip_vendor <vendor>  IP vendor (default: cornell.edu)"
-                puts "  -ip_library <lib>    IP library (default: user)"
-                puts "  -help                Show this help message"
-                exit 0
-            }
-            default {
-                puts "WARNING: Unknown argument: $arg"
-            }
+            "-ip_name"    { incr i; set ip_name    [lindex $argv $i] }
+            "-part"       { incr i; set part        [lindex $argv $i] }
+            "-rtl_dir"    { incr i; lappend rtl_dirs [lindex $argv $i] }
+            "-repo_out"   { incr i; set repo_out   [lindex $argv $i] }
+            "-ip_version" { incr i; set ip_version [lindex $argv $i] }
+            "-ip_vendor"  { incr i; set ip_vendor  [lindex $argv $i] }
+            "-ip_library" { incr i; set ip_library [lindex $argv $i] }
+            default       { puts "WARNING: Unknown argument: $arg" }
         }
     }
-
-    # Validate required arguments
-    if {[llength $rtl_dirs] == 0} {
-        puts "ERROR: at least one -rtl_dir is required"
-        exit 1
-    }
-    if {$repo_out eq ""} {
-        puts "ERROR: -repo_out is required"
-        exit 1
-    }
+    if {[llength $rtl_dirs] == 0} { puts "ERROR: -rtl_dir required"; exit 1 }
+    if {$repo_out eq ""}          { puts "ERROR: -repo_out required"; exit 1 }
 }
-
 parse_args
 
-# Convert to absolute paths
-set normalized_dirs {}
-foreach d $rtl_dirs {
-    lappend normalized_dirs [file normalize $d]
-}
-set rtl_dirs $normalized_dirs
+set norm_dirs {}
+foreach d $rtl_dirs { lappend norm_dirs [file normalize $d] }
+set rtl_dirs $norm_dirs
 set repo_out [file normalize $repo_out]
 
 puts "============================================================"
 puts "TPU IP Packaging Script"
-puts "============================================================"
 puts "IP Name:     $ip_name"
 puts "IP Version:  $ip_version"
 puts "Part:        $part"
@@ -110,254 +55,283 @@ puts "RTL Dirs:    $rtl_dirs"
 puts "Output Repo: $repo_out"
 puts "============================================================"
 
-# Create output directory
 file mkdir $repo_out
-
-# Create temporary project directory
-set proj_dir [file join [pwd] "pkg_${ip_name}_proj"]
+set proj_dir [file normalize [file join [pwd] "pkg_${ip_name}_proj"]]
 file delete -force $proj_dir
 
 ################################################################################
-# Step 1: Create Project
+# Step 1: Collect RTL file lists (before creating project)
 ################################################################################
-puts "\n>>> Step 1: Creating project..."
-create_project pkg_${ip_name} $proj_dir -part $part -force
-set_property target_language Verilog [current_project]
+puts "\n>>> Step 1: Collecting RTL files..."
 
-# Define TARGET_FPGA for conditional compilation (selects Xilinx BRAM IPs)
-set_property verilog_define {TARGET_FPGA=1} [current_fileset]
-
-################################################################################
-# Step 2: Add RTL Files
-################################################################################
-puts "\n>>> Step 2: Adding RTL files..."
-
-# Find all Verilog files from all RTL directories
-set v_files {}
+set v_files  {}
 set sv_files {}
 foreach rtl_dir $rtl_dirs {
     puts "  Scanning: $rtl_dir"
-    set v_files [concat $v_files [glob -nocomplain -directory $rtl_dir *.v]]
+    set v_files  [concat $v_files  [glob -nocomplain -directory $rtl_dir *.v]]
     set sv_files [concat $sv_files [glob -nocomplain -directory $rtl_dir *.sv]]
 }
 set all_rtl_files [concat $v_files $sv_files]
 
 if {[llength $all_rtl_files] == 0} {
     puts "ERROR: No RTL files found in: $rtl_dirs"
-    close_project
     exit 1
 }
+puts "  Found [llength $all_rtl_files] RTL file(s)"
+
+################################################################################
+# Step 2: Copy ALL RTL files into ip_out_dir/src/ FIRST
+#
+# This is the key fix. Vivado's IP packager requires all source files to live
+# under the IP root directory. By copying them before packaging we avoid both
+# the "outside project area" and "unreferenced file" warnings.
+################################################################################
+puts "\n>>> Step 2: Copying RTL files into IP src/ directory..."
+
+set ip_out_dir [file normalize [file join $repo_out "${ip_name}_${ip_version}"]]
+set ip_src_dir [file join $ip_out_dir "src"]
+file delete -force $ip_out_dir
+file mkdir $ip_src_dir
 
 foreach f $all_rtl_files {
-    puts "  Adding: [file tail $f]"
-    add_files -norecurse $f
+    set dst [file join $ip_src_dir [file tail $f]]
+    file copy -force $f $dst
+    puts "  Copied: [file tail $f]"
 }
+puts "  All RTL copied to: $ip_src_dir"
 
-# Set file types explicitly
-foreach f $sv_files {
-    set_property file_type "SystemVerilog" [get_files $f]
+################################################################################
+# Step 3: Create Vivado project pointing at the COPIES in src/
+################################################################################
+puts "\n>>> Step 3: Creating project..."
+create_project pkg_${ip_name} $proj_dir -part $part -force
+set_property target_language Verilog [current_project]
+set_property verilog_define {TARGET_FPGA=1} [current_fileset]
+
+# Add the copied files
+set copied_sv {}
+set copied_v  {}
+foreach f $all_rtl_files {
+    set dst [file join $ip_src_dir [file tail $f]]
+    add_files -norecurse $dst
+    if {[lsearch $sv_files $f] >= 0} {
+        set_property file_type "SystemVerilog" [get_files $dst]
+        lappend copied_sv $dst
+    } else {
+        lappend copied_v $dst
+    }
+    puts "  Added: [file tail $dst]"
 }
 
 ################################################################################
-# Step 3: Create BRAM IPs
+# Step 4: Create BRAM IPs
 ################################################################################
-puts "\n>>> Step 3: Creating BRAM IPs..."
+puts "\n>>> Step 4: Creating BRAM IPs..."
 
-# --- blk_mem_gen_0: Data BRAM used in scratchpad.sv ---
-# 32-bit wide, 8192 deep (13-bit address), True Dual Port RAM
-puts "  Creating blk_mem_gen_0 (Data BRAM - 32-bit x 8192)..."
-
+puts "  blk_mem_gen_0 (Data BRAM 32-bit x 8192)..."
 create_ip -name blk_mem_gen -vendor xilinx.com -library ip -version 8.4 \
     -module_name blk_mem_gen_0
-
 set_property -dict [list \
-    CONFIG.Memory_Type {True_Dual_Port_RAM} \
-    CONFIG.Write_Width_A {32} \
-    CONFIG.Write_Depth_A {8192} \
-    CONFIG.Read_Width_A {32} \
-    CONFIG.Write_Width_B {32} \
-    CONFIG.Read_Width_B {32} \
-    CONFIG.Enable_A {Use_ENA_Pin} \
-    CONFIG.Enable_B {Use_ENB_Pin} \
+    CONFIG.Memory_Type                                {True_Dual_Port_RAM} \
+    CONFIG.Write_Width_A                              {32} \
+    CONFIG.Write_Depth_A                              {8192} \
+    CONFIG.Read_Width_A                               {32} \
+    CONFIG.Write_Width_B                              {32} \
+    CONFIG.Read_Width_B                               {32} \
+    CONFIG.Enable_A                                   {Use_ENA_Pin} \
+    CONFIG.Enable_B                                   {Use_ENB_Pin} \
     CONFIG.Register_PortA_Output_of_Memory_Primitives {true} \
     CONFIG.Register_PortB_Output_of_Memory_Primitives {true} \
-    CONFIG.Use_Byte_Write_Enable {false} \
-    CONFIG.Byte_Size {9} \
-    CONFIG.Operating_Mode_A {WRITE_FIRST} \
-    CONFIG.Operating_Mode_B {WRITE_FIRST} \
+    CONFIG.Use_Byte_Write_Enable                      {false} \
+    CONFIG.Byte_Size                                  {9} \
+    CONFIG.Operating_Mode_A                           {WRITE_FIRST} \
+    CONFIG.Operating_Mode_B                           {WRITE_FIRST} \
 ] [get_ips blk_mem_gen_0]
-
 generate_target all [get_ips blk_mem_gen_0]
 export_ip_user_files -of_objects [get_ips blk_mem_gen_0] -no_script -force
 
-# --- blk_mem_gen_1: Instruction BRAM used in tpu.sv ---
-# 64-bit wide, 256 deep (8-bit address), True Dual Port RAM
-puts "  Creating blk_mem_gen_1 (Instruction BRAM - 64-bit x 256)..."
-
+puts "  blk_mem_gen_1 (Instruction BRAM 64-bit x 256)..."
 create_ip -name blk_mem_gen -vendor xilinx.com -library ip -version 8.4 \
     -module_name blk_mem_gen_1
-
 set_property -dict [list \
-    CONFIG.Memory_Type {True_Dual_Port_RAM} \
-    CONFIG.Write_Width_A {64} \
-    CONFIG.Write_Depth_A {256} \
-    CONFIG.Read_Width_A {64} \
-    CONFIG.Write_Width_B {64} \
-    CONFIG.Read_Width_B {64} \
-    CONFIG.Enable_A {Use_ENA_Pin} \
-    CONFIG.Enable_B {Use_ENB_Pin} \
+    CONFIG.Memory_Type                                {True_Dual_Port_RAM} \
+    CONFIG.Write_Width_A                              {64} \
+    CONFIG.Write_Depth_A                              {256} \
+    CONFIG.Read_Width_A                               {64} \
+    CONFIG.Write_Width_B                              {64} \
+    CONFIG.Read_Width_B                               {64} \
+    CONFIG.Enable_A                                   {Use_ENA_Pin} \
+    CONFIG.Enable_B                                   {Use_ENB_Pin} \
     CONFIG.Register_PortA_Output_of_Memory_Primitives {true} \
     CONFIG.Register_PortB_Output_of_Memory_Primitives {true} \
-    CONFIG.Use_Byte_Write_Enable {false} \
-    CONFIG.Byte_Size {9} \
-    CONFIG.Operating_Mode_A {WRITE_FIRST} \
-    CONFIG.Operating_Mode_B {WRITE_FIRST} \
+    CONFIG.Use_Byte_Write_Enable                      {false} \
+    CONFIG.Byte_Size                                  {9} \
+    CONFIG.Operating_Mode_A                           {WRITE_FIRST} \
+    CONFIG.Operating_Mode_B                           {WRITE_FIRST} \
 ] [get_ips blk_mem_gen_1]
-
 generate_target all [get_ips blk_mem_gen_1]
 export_ip_user_files -of_objects [get_ips blk_mem_gen_1] -no_script -force
-
-puts "  BRAM IPs created and targets generated."
+puts "  BRAM IPs created."
 
 ################################################################################
-# Step 4: Set Top Module
+# Step 5: Set top and compile order
 ################################################################################
-puts "\n>>> Step 4: Setting top module to tpu..."
+puts "\n>>> Step 5: Setting top module to 'tpu'..."
 set_property top tpu [current_fileset]
 update_compile_order -fileset sources_1
 
 ################################################################################
-# Step 5: Package IP
+# Step 6: Package IP
+# -import_files now works correctly because:
+#   - All RTL already lives under ip_out_dir/src/  → no "outside project" errors
+#   - -import_files copies the BRAM XCIs into the IP directory cleanly
+#   - All RTL files in src/ are already referenced by the project hierarchy
+#     so none should be marked "unreferenced"
 ################################################################################
-puts "\n>>> Step 5: Packaging IP..."
+puts "\n>>> Step 6: Packaging IP..."
 
-# Set IP output location
-set ip_out_dir [file join $repo_out "${ip_name}_${ip_version}"]
-file mkdir $ip_out_dir
+ipx::package_project -root_dir $ip_out_dir -vendor $ip_vendor \
+    -library $ip_library -taxonomy /UserIP -import_files -set_current true
 
-# Package the project - Vivado will auto-infer AXI interfaces
-ipx::package_project -root_dir $ip_out_dir -vendor $ip_vendor -library $ip_library \
-    -taxonomy /UserIP -import_files -set_current true
-
-# Get the current IP core
 set core [ipx::current_core]
+set_property name                $ip_name                                         $core
+set_property version             $ip_version                                      $core
+set_property display_name        "Cornell TPU Accelerator"                        $core
+set_property description         "TPU with AXI-Lite control and AXI-Stream data" $core
+set_property vendor_display_name "Cornell University"                             $core
+set_property company_url         "https://www.cornell.edu"                        $core
 
-# Set IP properties
-set_property name $ip_name $core
-set_property version $ip_version $core
-set_property display_name "Cornell TPU Accelerator" $core
-set_property description "TPU accelerator with AXI-Lite control and AXI-Stream data interfaces" $core
-set_property vendor_display_name "Cornell University" $core
-set_property company_url "https://www.cornell.edu" $core
+################################################################################
+# Step 7: Catch any files still marked unreferenced and add them manually
+################################################################################
+puts "\n>>> Step 7: Verifying all files in synthesis group..."
 
-# Add TARGET_FPGA define to all RTL files in the synthesis file group
-# This ensures conditional compilation selects Xilinx BRAM IPs
-puts "\n>>> Setting TARGET_FPGA define on all synthesis files..."
-set synth_files [ipx::get_file_groups xilinx_anylanguagesynthesis -of_objects $core]
-if {$synth_files ne ""} {
-    foreach fg $synth_files {
-        foreach f [ipx::get_files -of_objects $fg] {
-            set ftype [get_property TYPE $f]
-            if {$ftype eq "systemVerilog" || $ftype eq "verilog"} {
-                puts "  Setting define on: [get_property NAME $f]"
-                catch {set_property VERILOG_DEFINE {TARGET_FPGA=1} $f}
+set synth_group [ipx::get_file_groups xilinx_anylanguagesynthesis \
+                    -of_objects $core -quiet]
+if {$synth_group eq ""} {
+    set synth_group [ipx::add_file_group -type synthesis {} $core]
+    set_property name         "xilinx_anylanguagesynthesis" $synth_group
+    set_property display_name "Synthesis Sources"           $synth_group
+}
+
+set n_added 0
+foreach f [concat $copied_sv $copied_v] {
+    set fname    [file tail $f]
+    set rel_path "src/$fname"
+
+    # Try both relative and absolute lookup
+    set handle [ipx::get_files $rel_path -of_objects $synth_group -quiet]
+    if {$handle eq ""} {
+        set handle [ipx::get_files $f -of_objects $synth_group -quiet]
+    }
+
+    if {$handle ne ""} {
+        puts "  OK: $fname"
+        # Ensure define is set even on already-present files
+        catch { set_property VERILOG_DEFINE {TARGET_FPGA=1} $handle }
+    } else {
+        puts "  Adding (was unreferenced): $fname"
+        catch {
+            ipx::add_file $rel_path $synth_group
+            set handle [ipx::get_files $rel_path -of_objects $synth_group -quiet]
+            if {$handle ne ""} {
+                if {[lsearch $copied_sv $f] >= 0} {
+                    set_property type systemVerilogSource $handle
+                } else {
+                    set_property type verilogSource $handle
+                }
+                catch { set_property VERILOG_DEFINE {TARGET_FPGA=1} $handle }
             }
         }
+        incr n_added
     }
-} else {
-    puts "  WARNING: Could not find synthesis file group"
+}
+puts "  Files added manually: $n_added"
+
+################################################################################
+# Step 8: Set TARGET_FPGA define on ALL synthesis files
+################################################################################
+puts "\n>>> Step 8: Setting TARGET_FPGA define on synthesis files..."
+foreach fg [ipx::get_file_groups xilinx_anylanguagesynthesis -of_objects $core] {
+    foreach f [ipx::get_files -of_objects $fg] {
+        set ftype [get_property TYPE $f]
+        if {$ftype eq "systemVerilogSource" || $ftype eq "verilogSource"} {
+            catch { set_property VERILOG_DEFINE {TARGET_FPGA=1} $f }
+        }
+    }
 }
 
 ################################################################################
-# Step 6: Verify Auto-Inferred AXI Interfaces
+# Step 9: Verify AXI interfaces
 ################################################################################
-puts "\n>>> Step 6: Verifying auto-inferred AXI interfaces..."
-
-# List all bus interfaces that were auto-inferred
-puts "  Auto-inferred bus interfaces:"
-foreach intf [ipx::get_bus_interfaces -of_objects $core] {
-    set intf_name [get_property NAME $intf]
-    set intf_mode [get_property INTERFACE_MODE $intf]
-    set intf_vlnv [get_property ABSTRACTION_TYPE_VLNV $intf]
-    puts "    - $intf_name ($intf_mode) : $intf_vlnv"
-}
-
-# Verify the expected interfaces exist (using lowercase names as Vivado infers)
-set required_intfs {s00_axi s00_axis m00_axis}
-foreach req_intf $required_intfs {
-    if {[llength [ipx::get_bus_interfaces $req_intf -of_objects $core -quiet]] == 0} {
-        puts "WARNING: Expected interface '$req_intf' not found!"
+puts "\n>>> Step 9: Verifying AXI interfaces..."
+foreach req {s00_axi s00_axis m00_axis} {
+    if {[llength [ipx::get_bus_interfaces $req -of_objects $core -quiet]] == 0} {
+        puts "  WARNING: '$req' NOT found"
     } else {
-        puts "  OK: Interface '$req_intf' found"
+        puts "  OK: $req"
     }
 }
 
 ################################################################################
-# Step 7: Add Memory Map for AXI-Lite Interface
+# Step 10: AXI-Lite memory map
 ################################################################################
-puts "\n>>> Step 7: Adding memory map for AXI-Lite interface..."
-
-# Get the AXI-Lite interface (lowercase as auto-inferred by Vivado)
-set axi_lite_intf [ipx::get_bus_interfaces s00_axi -of_objects $core]
-
-# Check if memory map already exists
-if {[llength [ipx::get_memory_maps s00_axi -of_objects $core -quiet]] == 0} {
-    # Create memory map for register space (6-bit address = 64 bytes)
+puts "\n>>> Step 10: AXI-Lite memory map..."
+set axi_lite [ipx::get_bus_interfaces s00_axi -of_objects $core -quiet]
+if {$axi_lite ne "" && \
+    [llength [ipx::get_memory_maps s00_axi -of_objects $core -quiet]] == 0} {
     ipx::add_memory_map s00_axi $core
-    set_property slave_memory_map_ref s00_axi $axi_lite_intf
-    
+    set_property slave_memory_map_ref s00_axi $axi_lite
     ipx::add_address_block reg0 [ipx::get_memory_maps s00_axi -of_objects $core]
-    set addr_block [ipx::get_address_blocks reg0 -of_objects [ipx::get_memory_maps s00_axi -of_objects $core]]
-    set_property range 64 $addr_block
-    set_property width 32 $addr_block
-    puts "  Added memory map: 64 bytes, 32-bit width"
+    set ab [ipx::get_address_blocks reg0 \
+                -of_objects [ipx::get_memory_maps s00_axi -of_objects $core]]
+    set_property range 64 $ab
+    set_property width 32 $ab
+    puts "  Memory map: 64 bytes, 32-bit"
 } else {
-    puts "  Memory map already exists"
+    puts "  Memory map already present (or s00_axi not found)"
 }
 
 ################################################################################
-# Step 8: Set Interface Display Names (optional, for cleaner BD view)
+# Step 11: Display names
 ################################################################################
-puts "\n>>> Step 8: Setting interface display names..."
-
-# Rename interfaces to uppercase for cleaner block design appearance
-catch {set_property display_name "S00_AXI" [ipx::get_bus_interfaces s00_axi -of_objects $core]}
-catch {set_property display_name "S00_AXIS" [ipx::get_bus_interfaces s00_axis -of_objects $core]}
-catch {set_property display_name "M00_AXIS" [ipx::get_bus_interfaces m00_axis -of_objects $core]}
+catch { set_property display_name "S00_AXI"  \
+            [ipx::get_bus_interfaces s00_axi  -of_objects $core] }
+catch { set_property display_name "S00_AXIS" \
+            [ipx::get_bus_interfaces s00_axis -of_objects $core] }
+catch { set_property display_name "M00_AXIS" \
+            [ipx::get_bus_interfaces m00_axis -of_objects $core] }
 
 ################################################################################
-# Step 9: Finalize and Save
+# Step 12: Finalise
 ################################################################################
-puts "\n>>> Step 9: Finalizing IP package..."
-
-# Update checksums and validate
+puts "\n>>> Step 12: Finalising..."
 ipx::create_xgui_files $core
-ipx::update_checksums $core
-ipx::check_integrity $core
-ipx::save_core $core
+ipx::update_checksums  $core
+ipx::check_integrity   $core
+ipx::save_core         $core
 
-# Close packaging project
 close_project
-
-# Cleanup temporary project
 file delete -force $proj_dir
 
-################################################################################
-# Done
-################################################################################
-set vlnv "${ip_vendor}:${ip_library}:${ip_name}:${ip_version}"
+set n_src [llength [glob -nocomplain \
+    [file join $ip_src_dir *.sv] [file join $ip_src_dir *.v]]]
 
+set vlnv "${ip_vendor}:${ip_library}:${ip_name}:${ip_version}"
 puts ""
 puts "============================================================"
 puts "IP PACKAGING COMPLETE"
 puts "============================================================"
-puts "IP Location: $ip_out_dir"
-puts "VLNV:        $vlnv"
+puts "IP Location : $ip_out_dir"
+puts "VLNV        : $vlnv"
+puts "src/ files  : $n_src"
 puts "============================================================"
 puts ""
-puts "To use this IP in a Vivado project:"
+puts "Verify with:"
+puts "  ls $ip_src_dir"
+puts ""
+puts "To use in a Vivado project:"
 puts "  set_property ip_repo_paths $repo_out \[current_project\]"
 puts "  update_ip_catalog"
 puts ""
-
 exit 0

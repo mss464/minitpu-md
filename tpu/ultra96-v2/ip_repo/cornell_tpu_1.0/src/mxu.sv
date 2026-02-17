@@ -43,7 +43,7 @@ module mxu #(
 );
 
     // Temporary (for debugging and facilitating Cocotb testbench):
-    (* keep, verilator public_flat *) logic signed [DATA_WIDTH-1:0] out_matrix [N*N-1:0];
+    logic signed [DATA_WIDTH-1:0] out_matrix [N*N-1:0];
 
     // Index helper: row-major layout (r*N + c)
     // Using inline expressions for ASIC tool compatibility
@@ -60,6 +60,8 @@ module mxu #(
 
     // Index for load progress (indexes loading beats)
     logic [5:0] load_idx;  // Changed from integer for better synthesis/sim compatibility
+    wire [ADDRESS_WIDTH-1:0] load_idx_addr =
+        {{(ADDRESS_WIDTH-$bits(load_idx)){1'b0}}, load_idx};
 
     // Timer for memory fixed latency
     logic [$clog2(MEM_LATENCY+1)-1:0] mem_latency_timer;
@@ -150,19 +152,19 @@ module mxu #(
                         out_matrix[(r*N + c)] <= '0;
             end else begin
         
-            if (sys_valid_out_41 && int'(row_ptr[0]) < N) begin
+            if (sys_valid_out_41 && row_ptr[0] < N) begin
                 out_matrix[row_ptr[0]*N + 0] <= sys_data_out_41;
                 row_ptr[0] <= row_ptr[0] + 1;
             end
-            if (sys_valid_out_42 && int'(row_ptr[1]) < N) begin
+            if (sys_valid_out_42 && row_ptr[1] < N) begin
                 out_matrix[row_ptr[1]*N + 1] <= sys_data_out_42;
                 row_ptr[1] <= row_ptr[1] + 1;
             end
-            if (sys_valid_out_43 && int'(row_ptr[2]) < N) begin
+            if (sys_valid_out_43 && row_ptr[2] < N) begin
                 out_matrix[row_ptr[2]*N + 2] <= sys_data_out_43;
                 row_ptr[2] <= row_ptr[2] + 1;
             end
-            if (sys_valid_out_44 && int'(row_ptr[3]) < N) begin
+            if (sys_valid_out_44 && row_ptr[3] < N) begin
                 out_matrix[row_ptr[3]*N + 3] <= sys_data_out_44;
                 row_ptr[3] <= row_ptr[3] + 1;
             end
@@ -259,14 +261,14 @@ module mxu #(
                 end
 
                 S_LOAD_W_REQ: begin
-                    mem_req_addr <= base_addr_w_reg + ADDRESS_WIDTH'(load_idx);
+                    mem_req_addr <= base_addr_w_reg + load_idx_addr;
                     mem_read_en <= 1;
                     mem_latency_timer <= '0;
                     state <= S_LOAD_W_WAIT;
                 end
 
                 S_LOAD_W_WAIT: begin
-                    if (int'(mem_latency_timer) >= (MEM_LATENCY - 1)) begin
+                    if (mem_latency_timer >= (MEM_LATENCY - 1)) begin
                         for (int b = 0; b < BANKING_FACTOR; b++) begin
                             int flat_index;
                             flat_index = load_idx * BANKING_FACTOR + b;
@@ -287,14 +289,14 @@ module mxu #(
                 end
 
                 S_LOAD_X_REQ: begin
-                    mem_req_addr <= base_addr_x_reg + ADDRESS_WIDTH'(load_idx);
+                    mem_req_addr <= base_addr_x_reg + load_idx_addr;
                     mem_read_en <= 1;
                     mem_latency_timer <= '0;
                     state <= S_LOAD_X_WAIT;
                 end
 
                 S_LOAD_X_WAIT: begin
-                    if (int'(mem_latency_timer) >= (MEM_LATENCY - 1)) begin
+                    if (mem_latency_timer >= (MEM_LATENCY - 1)) begin
                         for (int b = 0; b < BANKING_FACTOR; b++) begin
                             int flat_index;
                             flat_index = load_idx * BANKING_FACTOR + b;
@@ -321,51 +323,31 @@ module mxu #(
 
                     // ---- Weight pipeline: column-major, reversed along rows ----
                     // Column 0
-<<<<<<< HEAD:tpu/systolic_wrapperv2.sv
-                    if (int'(phase_counter) < N) begin
-                        sys_weight_in_11 <= weight_matrix[idx(0, N-1-int'(phase_counter))];
-=======
                     if (phase_counter < N) begin
                         sys_weight_in_11 <= weight_matrix[(0*N + N-1-phase_counter)];
->>>>>>> 871fc05609a07bd2940b8644db58eeee4ef1b261:tpu/ultra96-v2/ip_repo/cornell_tpu_1.0/src/mxu.sv
                         sys_accept_w_1   <= 1;
                     end else sys_accept_w_1 <= 0;
 
                     // Column 1
-<<<<<<< HEAD:tpu/systolic_wrapperv2.sv
-                    if (phase_counter >= 1 && int'(phase_counter) < N+1) begin
-                        sys_weight_in_12 <= weight_matrix[idx(1, N-1-(int'(phase_counter)-1))];
-=======
                     if (phase_counter >= 1 && phase_counter < N+1) begin
                         sys_weight_in_12 <= weight_matrix[(1*N + N-1-(phase_counter-1))];
->>>>>>> 871fc05609a07bd2940b8644db58eeee4ef1b261:tpu/ultra96-v2/ip_repo/cornell_tpu_1.0/src/mxu.sv
                         sys_accept_w_2   <= 1;
                     end else sys_accept_w_2 <= 0;
 
                     // Column 2
-<<<<<<< HEAD:tpu/systolic_wrapperv2.sv
-                    if (phase_counter >= 2 && int'(phase_counter) < N+2) begin
-                        sys_weight_in_13 <= weight_matrix[idx(2, N-1-(int'(phase_counter)-2))];
-=======
                     if (phase_counter >= 2 && phase_counter < N+2) begin
                         sys_weight_in_13 <= weight_matrix[(2*N + N-1-(phase_counter-2))];
->>>>>>> 871fc05609a07bd2940b8644db58eeee4ef1b261:tpu/ultra96-v2/ip_repo/cornell_tpu_1.0/src/mxu.sv
                         sys_accept_w_3   <= 1;
                     end else sys_accept_w_3 <= 0;
 
                     // Column 3
-<<<<<<< HEAD:tpu/systolic_wrapperv2.sv
-                    if (phase_counter >= 3 && int'(phase_counter) < N+3) begin
-                        sys_weight_in_14 <= weight_matrix[idx(3, N-1-(int'(phase_counter)-3))];
-=======
                     if (phase_counter >= 3 && phase_counter < N+3) begin
                         sys_weight_in_14 <= weight_matrix[(3*N + N-1-(phase_counter-3))];
->>>>>>> 871fc05609a07bd2940b8644db58eeee4ef1b261:tpu/ultra96-v2/ip_repo/cornell_tpu_1.0/src/mxu.sv
                         sys_accept_w_4   <= 1;
                     end else sys_accept_w_4 <= 0;
 
                     // ---- Switch X input when last weight of column 1 is loaded ----
-                    if (int'(phase_counter) == N-1)
+                    if (phase_counter == N-1)
                         sys_switch_in <= 1;
                     else
                         sys_switch_in <= 0;
@@ -386,7 +368,7 @@ module mxu #(
                     end
 
                     // ---- Stop when weight and input sequences done ----
-                    if (int'(phase_counter) >= 3*N - 2) begin
+                    if (phase_counter >= 3*N - 2) begin
                         phase_counter <= '0;
                         state <= S_CAPTURE;
                     end
@@ -396,13 +378,13 @@ module mxu #(
                     bit all_done;
                     all_done = 1;
                     for (int i = 0; i < N; i++)
-                        all_done &= (int'(row_ptr[i]) == N);
+                        all_done &= (row_ptr[i] == N);
                     if (all_done)
                         state <= S_STORE_REQ;
                 end
 
                 S_STORE_REQ: begin
-                    mem_req_addr <= base_addr_out_reg + ADDRESS_WIDTH'(load_idx);
+                    mem_req_addr <= base_addr_out_reg + load_idx_addr;
 
                     for (int b = 0; b < BANKING_FACTOR; b++) begin
                         int flat_index;
@@ -419,7 +401,7 @@ module mxu #(
                 end
 
                 S_STORE_WAIT: begin
-                    if (int'(mem_latency_timer) >= (MEM_LATENCY - 1)) begin
+                    if (mem_latency_timer >= (MEM_LATENCY - 1)) begin
                         if ((int'(load_idx) + 1) * BANKING_FACTOR >= TOTAL_ELEMS) begin
                             state <= S_DONE;
                         end else begin
@@ -437,6 +419,9 @@ module mxu #(
                     state <= S_IDLE;
                 end
                 default: begin
+                    done <= 0;
+                    mem_read_en <= 0;
+                    mem_write_en <= 0;
                     state <= S_IDLE;
                 end
 
@@ -447,7 +432,7 @@ module mxu #(
     // Temporary: Break out the out matrix for waveform debugging
     generate
     for (genvar i = 0; i < N*N; i++) begin : OUT_DEBUG
-        (* keep, verilator public_flat *) logic signed [DATA_WIDTH-1:0] out_elem;
+        logic signed [DATA_WIDTH-1:0] out_elem;
         assign out_elem = out_matrix[i];
     end
     endgenerate

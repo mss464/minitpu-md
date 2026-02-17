@@ -146,6 +146,12 @@ logic [DATA_W-1:0] c_val;
                     bram_en <= 1'b0;
                     state <= IDLE;
                 end
+                default: begin
+                    done  <= 1'b0;
+                    bram_en <= 1'b0;
+                    bram_we <= 1'b0;
+                    state <= IDLE;
+                end
             endcase
         end
 end

@@ -9,16 +9,17 @@ module fp32_add #(
 );
 
 logic a_sign, b_sign, result_sign;
-logic [7:0] a_exp, b_exp, larger_exp, exp_diff, result_exp;
+logic [7:0] a_exp, b_exp;
+integer larger_exp_i, exp_diff_i, result_exp_i;
 logic [22:0] a_mant, b_mant;
 logic [23:0] a_mant_ext, b_mant_ext;
 logic [24:0] sum_mant;
 
 logic a_nan, b_nan, a_inf, b_inf, a_zero, b_zero;
 logic normalize_done;
-// ASIC FIX: Changed integer to reg [5:0] to avoid latch inference
-reg [4:0] shift_amount;
-reg found_leading_one;
+integer shift;
+logic [24:0] mant_sub;
+integer i;
 
 generate
     if (FORMAT == "FP32") begin : fp32_mode
@@ -38,19 +39,18 @@ generate
         assign b_zero = (b_exp == 8'h00) && (b_mant == 0);
         
         always_comb begin
-            // ASIC FIX: Initialize all outputs to avoid latches
-            result = 32'h0;
-            a_mant_ext = 24'h0;
-            b_mant_ext = 24'h0;
-            larger_exp = 8'h0;
-            exp_diff = 8'h0;
-            sum_mant = 25'h0;
+            // defaults to avoid latches
+            result = '0;
             result_sign = 1'b0;
-            result_exp = 8'h0;
+            a_mant_ext = '0;
+            b_mant_ext = '0;
+            sum_mant = '0;
+            larger_exp_i = 0;
+            exp_diff_i = 0;
+            result_exp_i = 0;
             normalize_done = 1'b0;
-            shift_amount = 5'h0;
-            found_leading_one = 1'b0;
-            
+            shift = 0;
+            mant_sub = '0;
             if (a_nan || b_nan) begin
                 result = 32'h7FC00000;  // NaN
             end
@@ -79,13 +79,13 @@ generate
                 
                 // align exponents
                 if (a_exp >= b_exp) begin
-                    larger_exp = a_exp;
-                    exp_diff = a_exp - b_exp;
-                    b_mant_ext = b_mant_ext >> exp_diff;
+                    larger_exp_i = int'(a_exp);
+                    exp_diff_i = int'(a_exp) - int'(b_exp);
+                    b_mant_ext = b_mant_ext >> exp_diff_i;
                 end else begin
-                    larger_exp = b_exp;
-                    exp_diff = b_exp - a_exp;
-                    a_mant_ext = a_mant_ext >> exp_diff;
+                    larger_exp_i = int'(b_exp);
+                    exp_diff_i = int'(b_exp) - int'(a_exp);
+                    a_mant_ext = a_mant_ext >> exp_diff_i;
                 end
                 
                 // add/sub mantissas
@@ -102,65 +102,62 @@ generate
                     end
                 end
                 
-                result_exp = larger_exp;
-                normalize_done = 1'b0;
-                
-                if (sum_mant[24]) begin
-                    sum_mant = sum_mant >> 1;
-                    result_exp = result_exp + 1;
-                    normalize_done = 1'b1;
-                end 
-                else if (sum_mant[23]) begin
-                    normalize_done = 1'b1;
-                end
-                
-                // ASIC FIX: Replace for-loop with priority encoder style logic
-                if (!normalize_done) begin
-                    // Find leading one position
-                    shift_amount = 5'd0;
-                    found_leading_one = 1'b0;
-                    
-                    if (sum_mant[22]) begin shift_amount = 5'd1;  found_leading_one = 1'b1; end
-                    else if (sum_mant[21]) begin shift_amount = 5'd2;  found_leading_one = 1'b1; end
-                    else if (sum_mant[20]) begin shift_amount = 5'd3;  found_leading_one = 1'b1; end
-                    else if (sum_mant[19]) begin shift_amount = 5'd4;  found_leading_one = 1'b1; end
-                    else if (sum_mant[18]) begin shift_amount = 5'd5;  found_leading_one = 1'b1; end
-                    else if (sum_mant[17]) begin shift_amount = 5'd6;  found_leading_one = 1'b1; end
-                    else if (sum_mant[16]) begin shift_amount = 5'd7;  found_leading_one = 1'b1; end
-                    else if (sum_mant[15]) begin shift_amount = 5'd8;  found_leading_one = 1'b1; end
-                    else if (sum_mant[14]) begin shift_amount = 5'd9;  found_leading_one = 1'b1; end
-                    else if (sum_mant[13]) begin shift_amount = 5'd10; found_leading_one = 1'b1; end
-                    else if (sum_mant[12]) begin shift_amount = 5'd11; found_leading_one = 1'b1; end
-                    else if (sum_mant[11]) begin shift_amount = 5'd12; found_leading_one = 1'b1; end
-                    else if (sum_mant[10]) begin shift_amount = 5'd13; found_leading_one = 1'b1; end
-                    else if (sum_mant[9])  begin shift_amount = 5'd14; found_leading_one = 1'b1; end
-                    else if (sum_mant[8])  begin shift_amount = 5'd15; found_leading_one = 1'b1; end
-                    else if (sum_mant[7])  begin shift_amount = 5'd16; found_leading_one = 1'b1; end
-                    else if (sum_mant[6])  begin shift_amount = 5'd17; found_leading_one = 1'b1; end
-                    else if (sum_mant[5])  begin shift_amount = 5'd18; found_leading_one = 1'b1; end
-                    else if (sum_mant[4])  begin shift_amount = 5'd19; found_leading_one = 1'b1; end
-                    else if (sum_mant[3])  begin shift_amount = 5'd20; found_leading_one = 1'b1; end
-                    else if (sum_mant[2])  begin shift_amount = 5'd21; found_leading_one = 1'b1; end
-                    else if (sum_mant[1])  begin shift_amount = 5'd22; found_leading_one = 1'b1; end
-                    else if (sum_mant[0])  begin shift_amount = 5'd23; found_leading_one = 1'b1; end
-                    
-                    if (found_leading_one) begin
-                        sum_mant = sum_mant << shift_amount;
-                        result_exp = result_exp - shift_amount;
+                // If both inputs are subnormal, keep result subnormal unless it crosses into normal range.
+                if (larger_exp_i == 0) begin
+                    if (sum_mant == 0) begin
+                        result = 32'h00000000;
+                    end
+                    else if (sum_mant[23]) begin
+                        // Promote to smallest normal
+                        result = {result_sign, 8'h01, sum_mant[22:0]};
+                    end
+                    else begin
+                        result = {result_sign, 8'h00, sum_mant[22:0]};
                     end
                 end
-                
-                if (sum_mant == 0) begin
-                    result = 32'h00000000;
-                end
-                else if (result_exp >= 8'hFF) begin
-                    result = {result_sign, 8'hFF, 23'h0}; 
-                end 
-                else if (result_exp == 8'h00) begin
-                    result = {result_sign, 8'h00, 23'h0};
-                end 
                 else begin
-                    result = {result_sign, result_exp, sum_mant[22:0]};
+                    result_exp_i = larger_exp_i;
+                    normalize_done = 1'b0;
+
+                    if (sum_mant[24]) begin
+                        sum_mant = sum_mant >> 1;
+                        result_exp_i = result_exp_i + 1;
+                        normalize_done = 1'b1;
+                    end 
+                    else if (sum_mant[23]) begin
+                        normalize_done = 1'b1;
+                    end
+
+                    if (!normalize_done) begin
+                        for (i = 22; i >= 0; i = i - 1) begin
+                            if (sum_mant[i] && !normalize_done) begin
+                                sum_mant = sum_mant << (23 - i);
+                                result_exp_i = result_exp_i - (23 - i);
+                                normalize_done = 1'b1;
+                            end
+                        end
+                    end
+
+                    if (sum_mant == 0) begin
+                        result = 32'h00000000;
+                    end
+                    else if (result_exp_i >= 255) begin
+                        result = {result_sign, 8'hFF, 23'h0};
+                    end
+                    else if (result_exp_i <= 0) begin
+                        shift = 1 - result_exp_i;
+                        if (shift >= 25) begin
+                            result = {result_sign, 8'h00, 23'h0};
+                        end else begin
+                            mant_sub = sum_mant >> shift;
+                            result = {result_sign, 8'h00, mant_sub[22:0]};
+                        end
+                    end
+                    else begin
+                        logic [7:0] res_exp_tmp;
+                        res_exp_tmp = result_exp_i[7:0];
+                        result = {result_sign, res_exp_tmp, sum_mant[22:0]};
+                    end
                 end
             end
         end

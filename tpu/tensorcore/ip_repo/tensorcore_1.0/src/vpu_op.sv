@@ -11,11 +11,11 @@ module vpu_op #(
 );
 
 // localparams for states
-localparam ADD = 4'd0;
-localparam SUB = 4'd1;
-localparam RELU = 4'd2;
-localparam MUL = 4'd3;
-localparam D_RELU = 4'd4; // relu deriv for backward pass
+localparam logic [OP_W-1:0] ADD = OP_W'(0);
+localparam logic [OP_W-1:0] SUB = OP_W'(1);
+localparam logic [OP_W-1:0] RELU = OP_W'(2);
+localparam logic [OP_W-1:0] MUL = OP_W'(3);
+localparam logic [OP_W-1:0] D_RELU = OP_W'(4); // relu deriv for backward pass
 
 // internal signalas for computation result storing
 logic [DATA_W-1:0] result;
@@ -47,10 +47,14 @@ fp32_mul #(.FORMAT("FP32")) fp32_multiplier (
   .result(mul_result)
 );
 
+// Workaround for Icarus Verilog "constant selects" error
+wire operand0_sign;
+assign operand0_sign = operand0[DATA_W-1];
+
 // ReLU operation 
 always_comb begin
   relu_result = {DATA_W{1'b0}};
-  if (!operand0[DATA_W-1]) begin
+  if (!operand0_sign) begin
     relu_result = operand0;
   end
 end
@@ -58,7 +62,7 @@ end
 // ReLU deriv
 always_comb begin
   d_relu_result = 32'h3f800000; // 1.0 in fp32
-  if (operand0[DATA_W-1] || operand0 == 32'h00000000) begin
+  if (operand0_sign || operand0 == 32'h00000000) begin
     d_relu_result = '0;
   end
 end
@@ -90,3 +94,4 @@ end
 assign result_out = result;
 
 endmodule
+
