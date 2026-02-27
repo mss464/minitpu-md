@@ -1,0 +1,62 @@
+# Symlinked agent config (source of truth is AGENTS.md)
+CLAUDE.md
+# Vivado / Vitis
+*.jou
+*.log
+*.str
+*.pb
+*.wdb
+*.wcfg
+*.runs
+*.cache
+*.hw
+*.ip_user_files
+*.sim
+*.gen
+*.xpr
+*.Xil
+*.tmp
+*.dcp
+*.xdc
+*.bit
+*.hwh
+*.ltx
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# OS
+.DS_Store
+
+# Build outputs
+build/
+output/
+fpga/output/
+fpga/.Xil/
+
+# Large artifacts
+*.zip
+*.tar
+*.gz
+*.png
+*.jpg
+*.pdf
+
+# FPGA build artifacts
+fpga/ip_repo/
+fpga/output/
+fpga/pkg_*_proj/
+fpga/.Xil/
+fpga/*.log
+fpga/*.jou
+fpga/build.log
+
+*.txt
+*.xml
+*.vcd
+*.zip
+.DS_Store
+
+*__pycache__*
