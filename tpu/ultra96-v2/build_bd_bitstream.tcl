@@ -187,9 +187,9 @@ set_property -dict [list \
     CONFIG.c_include_s2mm {1} \
     CONFIG.c_mm2s_burst_size {16} \
     CONFIG.c_s2mm_burst_size {16} \
-    CONFIG.c_m_axi_mm2s_data_width {128} \
+    CONFIG.c_m_axi_mm2s_data_width {256} \
     CONFIG.c_m_axis_mm2s_tdata_width {256} \
-    CONFIG.c_m_axi_s2mm_data_width {128} \
+    CONFIG.c_m_axi_s2mm_data_width {256} \
     CONFIG.c_s_axis_s2mm_tdata_width {256} \
 ] $dma
 
