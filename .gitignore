@@ -1,6 +1,18 @@
 # Symlinked agent config (source of truth is AGENTS.md)
 CLAUDE.md
 
+# simulation outputs
+*.log
+*.jou
+*.str
+*.wdb
+*.vcd
+*.fst
+*.out
+sim_output*
+__pycache__/
+*.pyc
+
 # FPGA build artifacts
 fpga/ip_repo/
 fpga/output/
