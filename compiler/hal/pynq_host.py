@@ -127,6 +127,7 @@ class TpuDriver:
         self.mmio.write(REG_ADDR["length"], length)
         self.mmio.write(REG_ADDR["tpu_mode"], TpuMode.READ_BRAM)
         
+        self.wait_for_flag("stream_ready", 1)
         self.dma.recvchannel.transfer(out_buf)
         self.dma.recvchannel.wait()
         
