@@ -1,0 +1,1064 @@
+#-----------------------------------------------------------
+# Vivado v2023.2 (64-bit)
+# SW Build 4029153 on Fri Oct 13 20:13:54 MDT 2023
+# IP Build 4028589 on Sat Oct 14 00:45:43 MDT 2023
+# SharedData Build 4025554 on Tue Oct 10 17:18:54 MDT 2023
+# Start of session at: Fri Feb 27 04:23:15 2026
+# Process ID: 859995
+# Current directory: /home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.runs/impl_1
+# Command line: vivado -log minitpu_wrapper.vdi -applog -product Vivado -messageDb vivado.pb -mode batch -source minitpu_wrapper.tcl -notrace
+# Log file: /home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.runs/impl_1/minitpu_wrapper.vdi
+# Journal file: /home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.runs/impl_1/vivado.jou
+# Running On: brg-zhang-xcel.ece.cornell.edu, OS: Linux, CPU Frequency: 3200.000 MHz, CPU Physical cores: 24, Host memory: 235732 MB
+#-----------------------------------------------------------
+source minitpu_wrapper.tcl -notrace
+create_project: Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 1556.188 ; gain = 36.836 ; free physical = 95423 ; free virtual = 187452
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1700] Loaded user IP repository '/home/mss464/minitpu-md/tpu/ultra96-v2/ip_repo'.
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/opt/xilinx/Vivado/2023.2/data/ip'.
+Command: link_design -top minitpu_wrapper -part xczu3eg-sbva484-1-i
+Design is defaulting to srcset: sources_1
+Design is defaulting to constrset: constrs_1
+INFO: [Device 21-403] Loading part xczu3eg-sbva484-1-i
+INFO: [Project 1-454] Reading design checkpoint '/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_dma_0_0/minitpu_axi_dma_0_0.dcp' for cell 'minitpu_i/axi_dma_0'
+INFO: [Project 1-454] Reading design checkpoint '/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/minitpu_axi_smc_0.dcp' for cell 'minitpu_i/axi_smc'
+INFO: [Project 1-454] Reading design checkpoint '/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_proc_sys_reset_0_0/minitpu_proc_sys_reset_0_0.dcp' for cell 'minitpu_i/proc_sys_reset_0'
+INFO: [Project 1-454] Reading design checkpoint '/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_tpu_0_0/minitpu_tpu_0_0.dcp' for cell 'minitpu_i/tpu_0'
+INFO: [Project 1-454] Reading design checkpoint '/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_zynq_ps_0/minitpu_zynq_ps_0.dcp' for cell 'minitpu_i/zynq_ps'
+INFO: [Project 1-454] Reading design checkpoint '/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_xbar_0/minitpu_xbar_0.dcp' for cell 'minitpu_i/axi_interconnect_0/xbar'
+INFO: [Project 1-454] Reading design checkpoint '/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_auto_pc_0/minitpu_auto_pc_0.dcp' for cell 'minitpu_i/axi_interconnect_0/s00_couplers/auto_pc'
+Netlist sorting complete. Time (s): cpu = 00:00:00.64 ; elapsed = 00:00:00.64 . Memory (MB): peak = 2500.062 ; gain = 0.000 ; free physical = 94456 ; free virtual = 186492
+INFO: [Netlist 29-17] Analyzing 1047 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-479] Netlist was created with Vivado 2023.2
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/s01_nodes/s01_aw_node/inst'
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:49]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:52]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:55]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:59]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:63]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:66]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:70]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:73]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:76]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:79]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:82]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-4' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:85]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-4' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:88]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-2' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:91]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-2' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:94]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-2' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:97]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-2' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:100]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:104]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-10' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:107]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-10' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:110]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:113]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:116]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:119]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-13' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:122]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:125]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:128]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-13' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:131]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:134]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-10' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:137]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:140]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:143]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:146]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-2' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:149]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:152]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:155]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-10' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:161]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-4' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:164]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-4' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:167]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-4' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:171]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-4' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:174]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc:178]
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_17/bd_252b_sawn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/s01_nodes/s01_aw_node/inst'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/smartconnect.xdc] for cell 'minitpu_i/axi_smc/inst'
+WARNING: [Vivado_Tcl 4-919] Waiver ID 'CDC-1' -from list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/smartconnect.xdc:1]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/smartconnect.xdc:2]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/smartconnect.xdc:3]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/smartconnect.xdc:4]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/smartconnect.xdc:5]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/smartconnect.xdc:6]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/smartconnect.xdc:7]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/smartconnect.xdc:8]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/smartconnect.xdc:9]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/smartconnect.xdc:10]
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/smartconnect.xdc] for cell 'minitpu_i/axi_smc/inst'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/m00_nodes/m00_b_node/inst'
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:49]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:52]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:55]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:59]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:63]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:66]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:70]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:73]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:76]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:79]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-4' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:85]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-4' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:88]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-2' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:91]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-2' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:94]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-2' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:97]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-2' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:100]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:104]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-10' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:107]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-10' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:110]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:113]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:116]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:119]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-13' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:122]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:125]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:128]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-13' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:131]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:134]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-10' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:137]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:140]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:143]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:146]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-2' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:149]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:152]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:155]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-10' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:161]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-4' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:164]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-4' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:167]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-4' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:171]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-4' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:174]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc:178]
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_25/bd_252b_m00bn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/m00_nodes/m00_b_node/inst'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/m00_nodes/m00_w_node/inst'
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc:49]
+INFO: [Common 17-14] Message 'Vivado 12-180' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc:52]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc:52]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc:55]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc:59]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc:63]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc:66]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc:70]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc:73]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc:76]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc:79]
+INFO: [Common 17-14] Message 'Vivado_Tcl 4-921' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc:79]
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_24/bd_252b_m00wn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/m00_nodes/m00_w_node/inst'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_23/bd_252b_m00awn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/m00_nodes/m00_aw_node/inst'
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_23/bd_252b_m00awn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/m00_nodes/m00_aw_node/inst'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_22/bd_252b_m00rn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/m00_nodes/m00_r_node/inst'
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_22/bd_252b_m00rn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/m00_nodes/m00_r_node/inst'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_21/bd_252b_m00arn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/m00_nodes/m00_ar_node/inst'
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_21/bd_252b_m00arn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/m00_nodes/m00_ar_node/inst'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_19/bd_252b_sbn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/s01_nodes/s01_b_node/inst'
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_19/bd_252b_sbn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/s01_nodes/s01_b_node/inst'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_18/bd_252b_swn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/s01_nodes/s01_w_node/inst'
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_18/bd_252b_swn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/s01_nodes/s01_w_node/inst'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_zynq_ps_0/minitpu_zynq_ps_0.xdc] for cell 'minitpu_i/zynq_ps/inst'
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_zynq_ps_0/minitpu_zynq_ps_0.xdc] for cell 'minitpu_i/zynq_ps/inst'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_12/bd_252b_srn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/s00_nodes/s00_r_node/inst'
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_12/bd_252b_srn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/s00_nodes/s00_r_node/inst'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_11/bd_252b_sarn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/s00_nodes/s00_ar_node/inst'
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_11/bd_252b_sarn_0_clocks.xdc] for cell 'minitpu_i/axi_smc/inst/s00_nodes/s00_ar_node/inst'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_1/bd_252b_psr_aclk_0.xdc] for cell 'minitpu_i/axi_smc/inst/clk_map/psr_aclk/U0'
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_1/bd_252b_psr_aclk_0.xdc] for cell 'minitpu_i/axi_smc/inst/clk_map/psr_aclk/U0'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_1/bd_252b_psr_aclk_0_board.xdc] for cell 'minitpu_i/axi_smc/inst/clk_map/psr_aclk/U0'
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_smc_0/bd_0/ip/ip_1/bd_252b_psr_aclk_0_board.xdc] for cell 'minitpu_i/axi_smc/inst/clk_map/psr_aclk/U0'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_dma_0_0/minitpu_axi_dma_0_0.xdc] for cell 'minitpu_i/axi_dma_0/U0'
+WARNING: [Vivado_Tcl 4-919] Waiver ID 'CDC-1' -from list should not be empty. [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_dma_0_0/minitpu_axi_dma_0_0.xdc:61]
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_dma_0_0/minitpu_axi_dma_0_0.xdc] for cell 'minitpu_i/axi_dma_0/U0'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_proc_sys_reset_0_0/minitpu_proc_sys_reset_0_0.xdc] for cell 'minitpu_i/proc_sys_reset_0/U0'
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_proc_sys_reset_0_0/minitpu_proc_sys_reset_0_0.xdc] for cell 'minitpu_i/proc_sys_reset_0/U0'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_proc_sys_reset_0_0/minitpu_proc_sys_reset_0_0_board.xdc] for cell 'minitpu_i/proc_sys_reset_0/U0'
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_proc_sys_reset_0_0/minitpu_proc_sys_reset_0_0_board.xdc] for cell 'minitpu_i/proc_sys_reset_0/U0'
+Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_dma_0_0/minitpu_axi_dma_0_0_clocks.xdc] for cell 'minitpu_i/axi_dma_0/U0'
+Finished Parsing XDC File [/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.gen/sources_1/bd/minitpu/ip/minitpu_axi_dma_0_0/minitpu_axi_dma_0_0_clocks.xdc] for cell 'minitpu_i/axi_dma_0/U0'
+INFO: [Project 1-1714] 49 XPM XDC files have been applied to the design.
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-1687] 440 scoped IP constraints or related sub-commands were skipped due to synthesis logic optimizations usually triggered by constant connectivity or unconnected output pins. To review the skipped constraints and messages, run the command 'set_param netlist.IPMsgFiltering false' before opening the design.
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3365.043 ; gain = 0.000 ; free physical = 93946 ; free virtual = 185982
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 187 instances were transformed.
+  DSP48E2 => DSP48E2 (DSP_ALU, DSP_A_B_DATA, DSP_C_DATA, DSP_MULTIPLIER, DSP_M_DATA, DSP_OUTPUT, DSP_PREADD, DSP_PREADD_DATA): 50 instances
+  RAM16X1D => RAM32X1D (RAMD32(x2)): 1 instance 
+  RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 1 instance 
+  RAM32M16 => RAM32M16 (RAMD32(x14), RAMS32(x2)): 135 instances
+
+21 Infos, 102 Warnings, 0 Critical Warnings and 0 Errors encountered.
+link_design completed successfully
+link_design: Time (s): cpu = 00:00:39 ; elapsed = 00:00:31 . Memory (MB): peak = 3365.043 ; gain = 1749.379 ; free physical = 93945 ; free virtual = 185981
+Command: opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xczu3eg'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu3eg'
+Running DRC as a precondition to command opt_design
+
+Starting DRC Task
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Project 1-461] DRC finished with 0 Errors
+INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 3365.043 ; gain = 0.000 ; free physical = 93928 ; free virtual = 185964
+
+Starting Cache Timing Information Task
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Ending Cache Timing Information Task | Checksum: 1c09b6586
+
+Time (s): cpu = 00:00:08 ; elapsed = 00:00:02 . Memory (MB): peak = 3365.043 ; gain = 0.000 ; free physical = 93912 ; free virtual = 185948
+
+Starting Logic Optimization Task
+
+Phase 1 Initialization
+
+Phase 1.1 Core Generation And Design Setup
+Phase 1.1 Core Generation And Design Setup | Checksum: 1c09b6586
+
+Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.02 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93652 ; free virtual = 185688
+
+Phase 1.2 Setup Constraints And Sort Netlist
+Phase 1.2 Setup Constraints And Sort Netlist | Checksum: 1c09b6586
+
+Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.04 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93652 ; free virtual = 185688
+Phase 1 Initialization | Checksum: 1c09b6586
+
+Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.04 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93652 ; free virtual = 185688
+
+Phase 2 Timer Update And Timing Data Collection
+
+Phase 2.1 Timer Update
+Phase 2.1 Timer Update | Checksum: 1c09b6586
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:00.99 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93658 ; free virtual = 185695
+
+Phase 2.2 Timing Data Collection
+Phase 2.2 Timing Data Collection | Checksum: 1c09b6586
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:01 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93644 ; free virtual = 185681
+Phase 2 Timer Update And Timing Data Collection | Checksum: 1c09b6586
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:01 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93644 ; free virtual = 185681
+
+Phase 3 Retarget
+INFO: [Opt 31-1566] Pulled 18 inverters resulting in an inversion of 905 pins
+INFO: [Opt 31-138] Pushed 70 inverter(s) to 10521 load pin(s).
+INFO: [Opt 31-49] Retargeted 0 cell(s).
+Phase 3 Retarget | Checksum: 14bf56dc8
+
+Time (s): cpu = 00:00:07 ; elapsed = 00:00:03 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93636 ; free virtual = 185672
+Retarget | Checksum: 14bf56dc8
+INFO: [Opt 31-389] Phase Retarget created 121 cells and removed 484 cells
+INFO: [Opt 31-1021] In phase Retarget, 40 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 4 Constant propagation
+INFO: [Opt 31-138] Pushed 2 inverter(s) to 7 load pin(s).
+Phase 4 Constant propagation | Checksum: a30efbfd
+
+Time (s): cpu = 00:00:07 ; elapsed = 00:00:04 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93632 ; free virtual = 185668
+Constant propagation | Checksum: a30efbfd
+INFO: [Opt 31-389] Phase Constant propagation created 39 cells and removed 260 cells
+INFO: [Opt 31-1021] In phase Constant propagation, 40 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 5 Sweep
+Phase 5 Sweep | Checksum: a27f20e3
+
+Time (s): cpu = 00:00:09 ; elapsed = 00:00:05 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93624 ; free virtual = 185661
+Sweep | Checksum: a27f20e3
+INFO: [Opt 31-389] Phase Sweep created 0 cells and removed 351 cells
+INFO: [Opt 31-1021] In phase Sweep, 52 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 6 BUFG optimization
+INFO: [Opt 31-1077] Phase BUFG optimization inserted 0 global clock buffer(s) for CLOCK_LOW_FANOUT.
+Phase 6 BUFG optimization | Checksum: a27f20e3
+
+Time (s): cpu = 00:00:10 ; elapsed = 00:00:06 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93624 ; free virtual = 185661
+BUFG optimization | Checksum: a27f20e3
+INFO: [Opt 31-662] Phase BUFG optimization created 0 cells of which 0 are BUFGs and removed 0 cells.
+
+Phase 7 Shift Register Optimization
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][0]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][10]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][11]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][12]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][13]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][14]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][15]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][16]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][17]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][18]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][19]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][1]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][20]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][21]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][22]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][23]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][24]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][25]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][26]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][27]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][28]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][29]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][2]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][30]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][31]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][32]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][33]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][3]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][4]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][5]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][6]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][7]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][8]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/rd_data_fifo_0/memory_reg[31][9]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][0]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][10]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][11]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][12]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][13]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][14]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][15]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][16]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][1]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][2]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][3]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][4]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][5]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][6]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][7]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][8]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/RD.r_channel_0/transaction_fifo_0/memory_reg[31][9]_srl32 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][0]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][10]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][11]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][12]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][13]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][14]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][15]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][16]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][17]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][18]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][19]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][1]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][20]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][21]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][22]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][23]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][2]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][3]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][4]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][5]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][6]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][7]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][8]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bid_fifo_0/memory_reg[3][9]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bresp_fifo_0/memory_reg[3][0]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_interconnect_0/s00_couplers/auto_pc/inst/gen_axilite.gen_b2s_conv.axilite_b2s/WR.b_channel_0/bresp_fifo_0/memory_reg[3][1]_srl4 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[10].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[11].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[12].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[13].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[14].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[15].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[16].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[1].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[2].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[3].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[4].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[5].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[6].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[7].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[8].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_r_cmd_fifo.r_cmd_fifo/gen_srls[9].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_w_cmd_fifo.w_cmd_fifo/gen_srls[1].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_exit_pipeline/m00_exit/inst/exit_inst/gen_w_cmd_fifo.w_cmd_fifo/gen_srls[2].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/m00_nodes/m00_aw_node/inst/inst_si_handler/gen_m_axis_arb_fifo.inst_axis_arb_fifo/gen_srls[1].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/s01_entry_pipeline/s01_si_converter/inst/gen_normal.splitter_inst/gen_no_wsplitter.gen_endpoint_woffset.gen_wbypass_offset_fifo.wbypass_offset_fifo/gen_srls[0].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/s01_entry_pipeline/s01_si_converter/inst/gen_normal.splitter_inst/gen_no_wsplitter.gen_endpoint_woffset.gen_wbypass_offset_fifo.wbypass_offset_fifo/gen_srls[10].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/s01_entry_pipeline/s01_si_converter/inst/gen_normal.splitter_inst/gen_no_wsplitter.gen_endpoint_woffset.gen_wbypass_offset_fifo.wbypass_offset_fifo/gen_srls[11].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+WARNING: [Opt 31-1131] Can not pull register out from minitpu_i/axi_smc/inst/s01_entry_pipeline/s01_si_converter/inst/gen_normal.splitter_inst/gen_no_wsplitter.gen_endpoint_woffset.gen_wbypass_offset_fifo.wbypass_offset_fifo/gen_srls[12].srl_nx1/shift_reg_reg[0]_srl16 due to none static srl address bits
+INFO: [Common 17-14] Message 'Opt 31-1131' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Opt 31-1064] SRL Remap converted 0 SRLs to 0 registers and converted 0 registers of register chains to 0 SRLs
+Phase 7 Shift Register Optimization | Checksum: a27f20e3
+
+Time (s): cpu = 00:00:10 ; elapsed = 00:00:06 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93624 ; free virtual = 185661
+Shift Register Optimization | Checksum: a27f20e3
+INFO: [Opt 31-389] Phase Shift Register Optimization created 0 cells and removed 0 cells
+
+Phase 8 Post Processing Netlist
+Phase 8 Post Processing Netlist | Checksum: 87f9b03c
+
+Time (s): cpu = 00:00:11 ; elapsed = 00:00:06 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93627 ; free virtual = 185663
+Post Processing Netlist | Checksum: 87f9b03c
+INFO: [Opt 31-389] Phase Post Processing Netlist created 0 cells and removed 0 cells
+INFO: [Opt 31-1021] In phase Post Processing Netlist, 40 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 9 Finalization
+
+Phase 9.1 Finalizing Design Cores and Updating Shapes
+Phase 9.1 Finalizing Design Cores and Updating Shapes | Checksum: eec107cc
+
+Time (s): cpu = 00:00:11 ; elapsed = 00:00:07 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93628 ; free virtual = 185664
+
+Phase 9.2 Verifying Netlist Connectivity
+
+Starting Connectivity Check Task
+
+Time (s): cpu = 00:00:00.14 ; elapsed = 00:00:00.14 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93628 ; free virtual = 185664
+Phase 9.2 Verifying Netlist Connectivity | Checksum: eec107cc
+
+Time (s): cpu = 00:00:12 ; elapsed = 00:00:07 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93628 ; free virtual = 185664
+Phase 9 Finalization | Checksum: eec107cc
+
+Time (s): cpu = 00:00:12 ; elapsed = 00:00:07 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93628 ; free virtual = 185664
+Opt_design Change Summary
+=========================
+
+
+-------------------------------------------------------------------------------------------------------------------------
+|  Phase                        |  #Cells created  |  #Cells Removed  |  #Constrained objects preventing optimizations  |
+-------------------------------------------------------------------------------------------------------------------------
+|  Retarget                     |             121  |             484  |                                             40  |
+|  Constant propagation         |              39  |             260  |                                             40  |
+|  Sweep                        |               0  |             351  |                                             52  |
+|  BUFG optimization            |               0  |               0  |                                              0  |
+|  Shift Register Optimization  |               0  |               0  |                                              0  |
+|  Post Processing Netlist      |               0  |               0  |                                             40  |
+-------------------------------------------------------------------------------------------------------------------------
+
+
+Ending Logic Optimization Task | Checksum: eec107cc
+
+Time (s): cpu = 00:00:12 ; elapsed = 00:00:07 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93628 ; free virtual = 185664
+INFO: [Constraints 18-11670] Building netlist checker database with flags, 0x8
+Done building netlist checker database: Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.02 . Memory (MB): peak = 3521.895 ; gain = 0.000 ; free physical = 93627 ; free virtual = 185664
+
+Starting Power Optimization Task
+INFO: [Pwropt 34-132] Skipping clock gating for clocks with a period < 2.00 ns.
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Running Vector-less Activity Propagation...
+INFO: [Pwropt 34-9] Applying IDT optimizations ...
+INFO: [Pwropt 34-10] Applying ODC optimizations ...
+
+Finished Running Vector-less Activity Propagation
+
+
+Starting PowerOpt Patch Enables Task
+INFO: [Pwropt 34-162] WRITE_MODE attribute of 2 BRAM(s) out of a total of 76 has been updated to save power. Run report_power_opt to get a complete listing of the BRAMs updated.
+INFO: [Pwropt 34-201] Structural ODC has moved 4 WE to EN ports
+Number of BRAM Ports augmented: 5 newly gated: 148 Total Ports: 152
+Ending PowerOpt Patch Enables Task | Checksum: 15b429c88
+
+Time (s): cpu = 00:00:00.85 ; elapsed = 00:00:00.83 . Memory (MB): peak = 4449.621 ; gain = 0.000 ; free physical = 92822 ; free virtual = 184859
+Ending Power Optimization Task | Checksum: 15b429c88
+
+Time (s): cpu = 00:00:40 ; elapsed = 00:00:17 . Memory (MB): peak = 4449.621 ; gain = 927.727 ; free physical = 92819 ; free virtual = 184855
+
+Starting Final Cleanup Task
+
+Starting Logic Optimization Task
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Ending Logic Optimization Task | Checksum: ad8c0a1e
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:04 . Memory (MB): peak = 4449.621 ; gain = 0.000 ; free physical = 92807 ; free virtual = 184844
+INFO: [Constraints 18-11670] Building netlist checker database with flags, 0x8
+Done building netlist checker database: Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.02 . Memory (MB): peak = 4449.621 ; gain = 0.000 ; free physical = 92809 ; free virtual = 184845
+Ending Final Cleanup Task | Checksum: ad8c0a1e
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:07 . Memory (MB): peak = 4449.621 ; gain = 0.000 ; free physical = 92809 ; free virtual = 184845
+
+Starting Netlist Obfuscation Task
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 4449.621 ; gain = 0.000 ; free physical = 92809 ; free virtual = 184845
+Ending Netlist Obfuscation Task | Checksum: ad8c0a1e
+
+Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 4449.621 ; gain = 0.000 ; free physical = 92809 ; free virtual = 184845
+INFO: [Common 17-83] Releasing license: Implementation
+53 Infos, 202 Warnings, 0 Critical Warnings and 0 Errors encountered.
+opt_design completed successfully
+opt_design: Time (s): cpu = 00:01:21 ; elapsed = 00:00:37 . Memory (MB): peak = 4449.621 ; gain = 1084.578 ; free physical = 92809 ; free virtual = 184845
+INFO: [runtcl-4] Executing : report_drc -file minitpu_wrapper_drc_opted.rpt -pb minitpu_wrapper_drc_opted.pb -rpx minitpu_wrapper_drc_opted.rpx
+Command: report_drc -file minitpu_wrapper_drc_opted.rpt -pb minitpu_wrapper_drc_opted.pb -rpx minitpu_wrapper_drc_opted.rpx
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 2-168] The results of DRC are in file /home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.runs/impl_1/minitpu_wrapper_drc_opted.rpt.
+report_drc completed successfully
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Write ShapeDB Complete: Time (s): cpu = 00:00:00.37 ; elapsed = 00:00:00.09 . Memory (MB): peak = 4465.629 ; gain = 0.000 ; free physical = 92830 ; free virtual = 184871
+INFO: [Common 17-1381] The checkpoint '/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.runs/impl_1/minitpu_wrapper_opt.dcp' has been generated.
+write_checkpoint: Time (s): cpu = 00:00:08 ; elapsed = 00:00:06 . Memory (MB): peak = 4465.629 ; gain = 0.000 ; free physical = 92834 ; free virtual = 184885
+Command: place_design
+Attempting to get a license for feature 'Implementation' and/or device 'xczu3eg'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu3eg'
+INFO: [Common 17-83] Releasing license: Implementation
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+Running DRC as a precondition to command place_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+INFO: [Place 30-611] Multithreading enabled for place_design using a maximum of 8 CPUs
+
+Starting Placer Task
+
+Phase 1 Placer Initialization
+
+Phase 1.1 Placer Initialization Netlist Sorting
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 4489.641 ; gain = 0.000 ; free physical = 92828 ; free virtual = 184879
+Phase 1.1 Placer Initialization Netlist Sorting | Checksum: 3bb4e286
+
+Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.04 . Memory (MB): peak = 4489.641 ; gain = 0.000 ; free physical = 92841 ; free virtual = 184892
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 4489.641 ; gain = 0.000 ; free physical = 92841 ; free virtual = 184892
+
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device | Checksum: ab9615ac
+
+Time (s): cpu = 00:00:27 ; elapsed = 00:00:20 . Memory (MB): peak = 4817.141 ; gain = 327.500 ; free physical = 92458 ; free virtual = 184509
+
+Phase 1.3 Build Placer Netlist Model
+Phase 1.3 Build Placer Netlist Model | Checksum: 16978fe54
+
+Time (s): cpu = 00:00:53 ; elapsed = 00:00:32 . Memory (MB): peak = 4849.156 ; gain = 359.516 ; free physical = 92414 ; free virtual = 184465
+
+Phase 1.4 Constrain Clocks/Macros
+Phase 1.4 Constrain Clocks/Macros | Checksum: 16978fe54
+
+Time (s): cpu = 00:00:53 ; elapsed = 00:00:32 . Memory (MB): peak = 4849.156 ; gain = 359.516 ; free physical = 92423 ; free virtual = 184474
+Phase 1 Placer Initialization | Checksum: 16978fe54
+
+Time (s): cpu = 00:00:53 ; elapsed = 00:00:33 . Memory (MB): peak = 4849.156 ; gain = 359.516 ; free physical = 92418 ; free virtual = 184468
+
+Phase 2 Global Placement
+
+Phase 2.1 Floorplanning
+
+Phase 2.1.1 Partition Driven Placement
+
+Phase 2.1.1.1 PBP: Partition Driven Placement
+Phase 2.1.1.1 PBP: Partition Driven Placement | Checksum: cfd61cf6
+
+Time (s): cpu = 00:01:49 ; elapsed = 00:00:53 . Memory (MB): peak = 4849.156 ; gain = 359.516 ; free physical = 92431 ; free virtual = 184482
+
+Phase 2.1.1.2 PBP: Clock Region Placement
+INFO: [Place 30-3162] Check ILP status : ILP-based clock placer completed successfully.
+Phase 2.1.1.2 PBP: Clock Region Placement | Checksum: cfd61cf6
+
+Time (s): cpu = 00:01:50 ; elapsed = 00:00:54 . Memory (MB): peak = 4849.156 ; gain = 359.516 ; free physical = 92442 ; free virtual = 184492
+
+Phase 2.1.1.3 PBP: Compute Congestion
+Phase 2.1.1.3 PBP: Compute Congestion | Checksum: cfd61cf6
+
+Time (s): cpu = 00:02:05 ; elapsed = 00:00:58 . Memory (MB): peak = 5259.141 ; gain = 769.500 ; free physical = 91962 ; free virtual = 184013
+
+Phase 2.1.1.4 PBP: UpdateTiming
+Phase 2.1.1.4 PBP: UpdateTiming | Checksum: c5ac25f4
+
+Time (s): cpu = 00:02:10 ; elapsed = 00:01:00 . Memory (MB): peak = 5291.156 ; gain = 801.516 ; free physical = 91932 ; free virtual = 183982
+
+Phase 2.1.1.5 PBP: Add part constraints
+Phase 2.1.1.5 PBP: Add part constraints | Checksum: c5ac25f4
+
+Time (s): cpu = 00:02:10 ; elapsed = 00:01:00 . Memory (MB): peak = 5291.156 ; gain = 801.516 ; free physical = 91937 ; free virtual = 183988
+Phase 2.1.1 Partition Driven Placement | Checksum: c5ac25f4
+
+Time (s): cpu = 00:02:10 ; elapsed = 00:01:00 . Memory (MB): peak = 5291.156 ; gain = 801.516 ; free physical = 91937 ; free virtual = 183988
+Phase 2.1 Floorplanning | Checksum: 1833fce20
+
+Time (s): cpu = 00:02:10 ; elapsed = 00:01:00 . Memory (MB): peak = 5291.156 ; gain = 801.516 ; free physical = 91938 ; free virtual = 183989
+
+Phase 2.2 Update Timing before SLR Path Opt
+Phase 2.2 Update Timing before SLR Path Opt | Checksum: 1833fce20
+
+Time (s): cpu = 00:02:10 ; elapsed = 00:01:00 . Memory (MB): peak = 5291.156 ; gain = 801.516 ; free physical = 91938 ; free virtual = 183989
+
+Phase 2.3 Post-Processing in Floorplanning
+Phase 2.3 Post-Processing in Floorplanning | Checksum: 186d598bb
+
+Time (s): cpu = 00:02:11 ; elapsed = 00:01:01 . Memory (MB): peak = 5291.156 ; gain = 801.516 ; free physical = 91920 ; free virtual = 183971
+
+Phase 2.4 Global Placement Core
+
+Phase 2.4.1 UpdateTiming Before Physical Synthesis
+Phase 2.4.1 UpdateTiming Before Physical Synthesis | Checksum: 14c996ba3
+
+Time (s): cpu = 00:05:08 ; elapsed = 00:02:02 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91871 ; free virtual = 183922
+
+Phase 2.4.2 Physical Synthesis In Placer
+INFO: [Physopt 32-1035] Found 2733 LUTNM shape to break, 1419 LUT instances to create LUTNM shape
+INFO: [Physopt 32-1044] Break lutnm for timing: one critical 297, two critical 2436, total 1000, new lutff created 0
+INFO: [Physopt 32-1138] End 1 Pass. Optimized 1559 nets or LUTs. Breaked 1000 LUTs, combined 559 existing LUTs and moved 0 existing LUT
+INFO: [Physopt 32-1030] Pass 1. Identified 24 candidate driver sets for equivalent driver rewiring.
+INFO: [Physopt 32-661] Optimized 18 nets.  Re-placed 138 instances.
+INFO: [Physopt 32-775] End 1 Pass. Optimized 18 nets or cells. Created 136 new cells, deleted 217 existing cells and moved 138 existing cells
+Netlist sorting complete. Time (s): cpu = 00:00:00.11 ; elapsed = 00:00:00.11 . Memory (MB): peak = 5399.156 ; gain = 0.000 ; free physical = 91862 ; free virtual = 183913
+INFO: [Physopt 32-65] No nets found for high-fanout optimization.
+INFO: [Physopt 32-232] Optimized 0 net. Created 0 new instance.
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-456] No candidate cells for DSP register optimization found in the design.
+INFO: [Physopt 32-775] End 2 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-1123] No candidate cells found for Shift Register to Pipeline optimization
+INFO: [Physopt 32-775] End 2 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-1401] No candidate cells found for Shift Register optimization.
+INFO: [Physopt 32-677] No candidate cells for Shift Register optimization found in the design
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-526] No candidate cells for BRAM register optimization found in the design
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-846] No candidate cells for URAM register optimization found in the design
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-846] No candidate cells for URAM register optimization found in the design
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-949] No candidate nets found for dynamic/static region interface net replication
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 5399.156 ; gain = 0.000 ; free physical = 91874 ; free virtual = 183925
+
+Summary of Physical Synthesis Optimizations
+============================================
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+|  Optimization                                     |  Added Cells  |  Removed Cells  |  Optimized Cells/Nets  |  Dont Touch  |  Iterations  |  Elapsed   |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+|  LUT Combining                                    |         1000  |            559  |                  1559  |           0  |           1  |  00:00:03  |
+|  Retime                                           |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Equivalent Driver Rewiring                       |          136  |            217  |                    18  |           0  |           1  |  00:00:02  |
+|  Very High Fanout                                 |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  DSP Register                                     |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Shift Register to Pipeline                       |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Shift Register                                   |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  BRAM Register                                    |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  URAM Register                                    |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Dynamic/Static Region Interface Net Replication  |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Total                                            |         1136  |            776  |                  1577  |           0  |          10  |  00:00:05  |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Phase 2.4.2 Physical Synthesis In Placer | Checksum: 17606db8f
+
+Time (s): cpu = 00:05:19 ; elapsed = 00:02:11 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91864 ; free virtual = 183914
+Phase 2.4 Global Placement Core | Checksum: 136078877
+
+Time (s): cpu = 00:05:39 ; elapsed = 00:02:17 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91850 ; free virtual = 183901
+Phase 2 Global Placement | Checksum: 136078877
+
+Time (s): cpu = 00:05:39 ; elapsed = 00:02:17 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91850 ; free virtual = 183901
+
+Phase 3 Detail Placement
+
+Phase 3.1 Commit Multi Column Macros
+Phase 3.1 Commit Multi Column Macros | Checksum: d3cedc10
+
+Time (s): cpu = 00:05:59 ; elapsed = 00:02:22 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91835 ; free virtual = 183885
+
+Phase 3.2 Commit Most Macros & LUTRAMs
+Phase 3.2 Commit Most Macros & LUTRAMs | Checksum: 165784db0
+
+Time (s): cpu = 00:06:07 ; elapsed = 00:02:26 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91832 ; free virtual = 183883
+
+Phase 3.3 Small Shape DP
+
+Phase 3.3.1 Small Shape Clustering
+Phase 3.3.1 Small Shape Clustering | Checksum: 1a610ed5e
+
+Time (s): cpu = 00:07:10 ; elapsed = 00:02:42 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91803 ; free virtual = 183854
+
+Phase 3.3.2 Slice Area Swap
+
+Phase 3.3.2.1 Slice Area Swap Initial
+Phase 3.3.2.1 Slice Area Swap Initial | Checksum: 12ab8d45c
+
+Time (s): cpu = 00:07:19 ; elapsed = 00:02:49 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91795 ; free virtual = 183845
+Phase 3.3.2 Slice Area Swap | Checksum: 12ab8d45c
+
+Time (s): cpu = 00:07:19 ; elapsed = 00:02:50 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91806 ; free virtual = 183857
+Phase 3.3 Small Shape DP | Checksum: e121521e
+
+Time (s): cpu = 00:07:36 ; elapsed = 00:02:55 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91816 ; free virtual = 183867
+
+Phase 3.4 Re-assign LUT pins
+Phase 3.4 Re-assign LUT pins | Checksum: d837ca67
+
+Time (s): cpu = 00:07:39 ; elapsed = 00:02:58 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91802 ; free virtual = 183853
+
+Phase 3.5 Pipeline Register Optimization
+Phase 3.5 Pipeline Register Optimization | Checksum: 15e72e3a1
+
+Time (s): cpu = 00:07:40 ; elapsed = 00:02:59 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91791 ; free virtual = 183842
+
+Phase 3.6 Fast Optimization
+Phase 3.6 Fast Optimization | Checksum: 20b556abc
+
+Time (s): cpu = 00:08:17 ; elapsed = 00:03:09 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91815 ; free virtual = 183866
+Phase 3 Detail Placement | Checksum: 20b556abc
+
+Time (s): cpu = 00:08:18 ; elapsed = 00:03:10 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91815 ; free virtual = 183866
+
+Phase 4 Post Placement Optimization and Clean-Up
+
+Phase 4.1 Post Commit Optimization
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 4.1.1 Post Placement Optimization
+Post Placement Optimization Initialization | Checksum: 1745771a6
+
+Phase 4.1.1.1 BUFG Insertion
+
+Starting Physical Synthesis Task
+
+Phase 1 Physical Synthesis Initialization
+INFO: [Physopt 32-721] Multithreading enabled for phys_opt_design using a maximum of 8 CPUs
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=-0.001 | TNS=-0.001 |
+Phase 1 Physical Synthesis Initialization | Checksum: 21985101d
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:01 . Memory (MB): peak = 5399.156 ; gain = 0.000 ; free physical = 91815 ; free virtual = 183866
+INFO: [Place 46-35] Processed net minitpu_i/axi_dma_0/U0/I_PRMRY_DATAMOVER/GEN_S2MM_FULL.I_S2MM_FULL_WRAPPER/I_RESET/sig_cmd_stat_rst_user_reg_n_cdc_from, inserted BUFG to drive 1098 loads.
+INFO: [Place 46-45] Replicated bufg driver minitpu_i/axi_dma_0/U0/I_PRMRY_DATAMOVER/GEN_S2MM_FULL.I_S2MM_FULL_WRAPPER/I_RESET/sig_cmd_stat_rst_user_reg_n_cdc_from_reg_replica
+INFO: [Place 46-56] BUFG insertion identified 1 candidate nets. Inserted BUFG: 1, Replicated BUFG Driver: 1, Skipped due to Placement/Routing Conflicts: 0, Skipped due to Timing Degradation: 0, Skipped due to netlist editing failed: 0.
+Ending Physical Synthesis Task | Checksum: 19aca18fa
+
+Time (s): cpu = 00:00:07 ; elapsed = 00:00:03 . Memory (MB): peak = 5399.156 ; gain = 0.000 ; free physical = 91826 ; free virtual = 183877
+Phase 4.1.1.1 BUFG Insertion | Checksum: 156e45b38
+
+Time (s): cpu = 00:09:12 ; elapsed = 00:03:26 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91814 ; free virtual = 183865
+
+Phase 4.1.1.2 Post Placement Timing Optimization
+INFO: [Place 30-746] Post Placement Timing Summary WNS=0.507. For the most accurate timing information please run report_timing.
+Phase 4.1.1.2 Post Placement Timing Optimization | Checksum: 12ac491a8
+
+Time (s): cpu = 00:09:34 ; elapsed = 00:03:44 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91866 ; free virtual = 183917
+
+Time (s): cpu = 00:09:34 ; elapsed = 00:03:44 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91866 ; free virtual = 183917
+Phase 4.1 Post Commit Optimization | Checksum: 12ac491a8
+
+Time (s): cpu = 00:09:34 ; elapsed = 00:03:44 . Memory (MB): peak = 5399.156 ; gain = 909.516 ; free physical = 91867 ; free virtual = 183918
+Netlist sorting complete. Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.04 . Memory (MB): peak = 5411.141 ; gain = 0.000 ; free physical = 91818 ; free virtual = 183869
+
+Phase 4.2 Post Placement Cleanup
+Phase 4.2 Post Placement Cleanup | Checksum: 1639cbc87
+
+Time (s): cpu = 00:09:53 ; elapsed = 00:03:51 . Memory (MB): peak = 5411.141 ; gain = 921.500 ; free physical = 91811 ; free virtual = 183862
+
+Phase 4.3 Placer Reporting
+
+Phase 4.3.1 Print Estimated Congestion
+INFO: [Place 30-612] Post-Placement Estimated Congestion 
+ ________________________________________________________________________
+|           | Global Congestion | Long Congestion   | Short Congestion  |
+| Direction | Region Size       | Region Size       | Region Size       |
+|___________|___________________|___________________|___________________|
+|      North|                1x1|                1x1|                4x4|
+|___________|___________________|___________________|___________________|
+|      South|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+|       East|                1x1|                1x1|                4x4|
+|___________|___________________|___________________|___________________|
+|       West|                1x1|                1x1|                4x4|
+|___________|___________________|___________________|___________________|
+
+Phase 4.3.1 Print Estimated Congestion | Checksum: 1639cbc87
+
+Time (s): cpu = 00:09:53 ; elapsed = 00:03:52 . Memory (MB): peak = 5411.141 ; gain = 921.500 ; free physical = 91824 ; free virtual = 183875
+Phase 4.3 Placer Reporting | Checksum: 1639cbc87
+
+Time (s): cpu = 00:09:54 ; elapsed = 00:03:52 . Memory (MB): peak = 5411.141 ; gain = 921.500 ; free physical = 91824 ; free virtual = 183875
+
+Phase 4.4 Final Placement Cleanup
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 5411.141 ; gain = 0.000 ; free physical = 91824 ; free virtual = 183875
+
+Time (s): cpu = 00:09:54 ; elapsed = 00:03:52 . Memory (MB): peak = 5411.141 ; gain = 921.500 ; free physical = 91824 ; free virtual = 183875
+Phase 4 Post Placement Optimization and Clean-Up | Checksum: 15c1108eb
+
+Time (s): cpu = 00:09:54 ; elapsed = 00:03:52 . Memory (MB): peak = 5411.141 ; gain = 921.500 ; free physical = 91809 ; free virtual = 183860
+Ending Placer Task | Checksum: d645e98e
+
+Time (s): cpu = 00:09:54 ; elapsed = 00:03:53 . Memory (MB): peak = 5411.141 ; gain = 921.500 ; free physical = 91821 ; free virtual = 183871
+102 Infos, 202 Warnings, 0 Critical Warnings and 0 Errors encountered.
+place_design completed successfully
+place_design: Time (s): cpu = 00:10:00 ; elapsed = 00:03:54 . Memory (MB): peak = 5411.141 ; gain = 945.512 ; free physical = 91825 ; free virtual = 183876
+INFO: [runtcl-4] Executing : report_io -file minitpu_wrapper_io_placed.rpt
+report_io: Time (s): cpu = 00:00:00.12 ; elapsed = 00:00:00.24 . Memory (MB): peak = 5411.141 ; gain = 0.000 ; free physical = 91834 ; free virtual = 183885
+INFO: [runtcl-4] Executing : report_utilization -file minitpu_wrapper_utilization_placed.rpt -pb minitpu_wrapper_utilization_placed.pb
+INFO: [runtcl-4] Executing : report_control_sets -verbose -file minitpu_wrapper_control_sets_placed.rpt
+report_control_sets: Time (s): cpu = 00:00:00.13 ; elapsed = 00:00:00.25 . Memory (MB): peak = 5411.141 ; gain = 0.000 ; free physical = 91832 ; free virtual = 183884
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Write ShapeDB Complete: Time (s): cpu = 00:00:00.66 ; elapsed = 00:00:00.14 . Memory (MB): peak = 5411.141 ; gain = 0.000 ; free physical = 91827 ; free virtual = 183888
+Wrote PlaceDB: Time (s): cpu = 00:00:09 ; elapsed = 00:00:03 . Memory (MB): peak = 5411.141 ; gain = 0.000 ; free physical = 91750 ; free virtual = 183873
+Wrote PulsedLatchDB: Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 5411.141 ; gain = 0.000 ; free physical = 91758 ; free virtual = 183881
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Wrote RouteStorage: Time (s): cpu = 00:00:00.36 ; elapsed = 00:00:00.19 . Memory (MB): peak = 5411.141 ; gain = 0.000 ; free physical = 91758 ; free virtual = 183881
+Wrote Netlist Cache: Time (s): cpu = 00:00:00.16 ; elapsed = 00:00:00.08 . Memory (MB): peak = 5411.141 ; gain = 0.000 ; free physical = 91751 ; free virtual = 183879
+Wrote Device Cache: Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.02 . Memory (MB): peak = 5411.141 ; gain = 0.000 ; free physical = 91753 ; free virtual = 183884
+Write Physdb Complete: Time (s): cpu = 00:00:09 ; elapsed = 00:00:03 . Memory (MB): peak = 5411.141 ; gain = 0.000 ; free physical = 91752 ; free virtual = 183884
+INFO: [Common 17-1381] The checkpoint '/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.runs/impl_1/minitpu_wrapper_placed.dcp' has been generated.
+write_checkpoint: Time (s): cpu = 00:00:19 ; elapsed = 00:00:10 . Memory (MB): peak = 5435.152 ; gain = 24.012 ; free physical = 91826 ; free virtual = 183903
+Command: phys_opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xczu3eg'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu3eg'
+
+Starting Initial Update Timing Task
+
+Time (s): cpu = 00:00:27 ; elapsed = 00:00:06 . Memory (MB): peak = 5435.152 ; gain = 0.000 ; free physical = 91821 ; free virtual = 183897
+INFO: [Vivado_Tcl 4-383] Design worst setup slack (WNS) is greater than or equal to 0.000 ns. Skipping all physical synthesis optimizations.
+INFO: [Vivado_Tcl 4-232] No setup violation found. The netlist was not modified.
+INFO: [Common 17-83] Releasing license: Implementation
+111 Infos, 202 Warnings, 0 Critical Warnings and 0 Errors encountered.
+phys_opt_design completed successfully
+phys_opt_design: Time (s): cpu = 00:00:28 ; elapsed = 00:00:07 . Memory (MB): peak = 5435.152 ; gain = 0.000 ; free physical = 91821 ; free virtual = 183897
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Write ShapeDB Complete: Time (s): cpu = 00:00:00.6 ; elapsed = 00:00:00.13 . Memory (MB): peak = 5435.152 ; gain = 0.000 ; free physical = 91792 ; free virtual = 183878
+Wrote PlaceDB: Time (s): cpu = 00:00:08 ; elapsed = 00:00:03 . Memory (MB): peak = 5435.152 ; gain = 0.000 ; free physical = 91741 ; free virtual = 183888
+Wrote PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 5435.152 ; gain = 0.000 ; free physical = 91744 ; free virtual = 183890
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Wrote RouteStorage: Time (s): cpu = 00:00:00.38 ; elapsed = 00:00:00.25 . Memory (MB): peak = 5435.152 ; gain = 0.000 ; free physical = 91741 ; free virtual = 183889
+Wrote Netlist Cache: Time (s): cpu = 00:00:00.14 ; elapsed = 00:00:00.08 . Memory (MB): peak = 5435.152 ; gain = 0.000 ; free physical = 91740 ; free virtual = 183893
+Wrote Device Cache: Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.02 . Memory (MB): peak = 5435.152 ; gain = 0.000 ; free physical = 91736 ; free virtual = 183893
+Write Physdb Complete: Time (s): cpu = 00:00:09 ; elapsed = 00:00:03 . Memory (MB): peak = 5435.152 ; gain = 0.000 ; free physical = 91735 ; free virtual = 183892
+INFO: [Common 17-1381] The checkpoint '/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.runs/impl_1/minitpu_wrapper_physopt.dcp' has been generated.
+write_checkpoint: Time (s): cpu = 00:00:13 ; elapsed = 00:00:07 . Memory (MB): peak = 5435.152 ; gain = 0.000 ; free physical = 91799 ; free virtual = 183900
+Command: route_design
+Attempting to get a license for feature 'Implementation' and/or device 'xczu3eg'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu3eg'
+Running DRC as a precondition to command route_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+
+Starting Routing Task
+INFO: [Route 35-254] Multithreading enabled for route_design using a maximum of 8 CPUs
+
+Phase 1 Build RT Design
+Checksum: PlaceDB: 67e46556 ConstDB: 0 ShapeSum: 35895959 RouteDB: 38d82adf
+Nodegraph reading from file.  Time (s): cpu = 00:00:00.52 ; elapsed = 00:00:00.54 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91761 ; free virtual = 183862
+Post Restoration Checksum: NetGraph: 1bcbcde0 | NumContArr: 49ab2c72 | Constraints: 4b93e385 | Timing: c2a8fa9d
+Phase 1 Build RT Design | Checksum: 173b3d874
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:05 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91708 ; free virtual = 183809
+
+Phase 2 Router Initialization
+
+Phase 2.1 Fix Topology Constraints
+Phase 2.1 Fix Topology Constraints | Checksum: 173b3d874
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:05 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91708 ; free virtual = 183809
+
+Phase 2.2 Pre Route Cleanup
+Phase 2.2 Pre Route Cleanup | Checksum: 173b3d874
+
+Time (s): cpu = 00:00:33 ; elapsed = 00:00:05 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91707 ; free virtual = 183808
+
+Phase 2.3 Global Clock Net Routing
+ Number of Nodes with overlaps = 0
+Phase 2.3 Global Clock Net Routing | Checksum: 18681e789
+
+Time (s): cpu = 00:00:36 ; elapsed = 00:00:06 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91723 ; free virtual = 183824
+
+Phase 2.4 Update Timing
+Phase 2.4 Update Timing | Checksum: 18ac41c9d
+
+Time (s): cpu = 00:00:55 ; elapsed = 00:00:13 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91757 ; free virtual = 183858
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=1.416  | TNS=0.000  | WHS=-0.075 | THS=-7.715 |
+
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 0 %
+  Global Horizontal Routing Utilization  = 0 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 61518
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 38980
+  Number of Partially Routed Nets     = 22538
+  Number of Node Overlaps             = 0
+
+Phase 2 Router Initialization | Checksum: 1e1cb92f4
+
+Time (s): cpu = 00:01:32 ; elapsed = 00:00:24 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91724 ; free virtual = 183825
+
+Phase 3 Initial Routing
+
+Phase 3.1 Global Routing
+Phase 3.1 Global Routing | Checksum: 1e1cb92f4
+
+Time (s): cpu = 00:01:32 ; elapsed = 00:00:24 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91724 ; free virtual = 183825
+
+Phase 3.2 Initial Net Routing
+Phase 3.2 Initial Net Routing | Checksum: 1f40f1d95
+
+Time (s): cpu = 00:01:57 ; elapsed = 00:00:31 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91715 ; free virtual = 183816
+Phase 3 Initial Routing | Checksum: 1dabea2aa
+
+Time (s): cpu = 00:01:59 ; elapsed = 00:00:32 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91715 ; free virtual = 183815
+
+Phase 4 Rip-up And Reroute
+
+Phase 4.1 Global Iteration 0
+ Number of Nodes with overlaps = 15106
+ Number of Nodes with overlaps = 2109
+ Number of Nodes with overlaps = 387
+ Number of Nodes with overlaps = 80
+ Number of Nodes with overlaps = 17
+ Number of Nodes with overlaps = 2
+ Number of Nodes with overlaps = 1
+ Number of Nodes with overlaps = 0
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-0.487 | TNS=-41.033| WHS=0.011  | THS=0.000  |
+
+Phase 4.1 Global Iteration 0 | Checksum: 11b838178
+
+Time (s): cpu = 00:04:32 ; elapsed = 00:01:28 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91711 ; free virtual = 183812
+
+Phase 4.2 Global Iteration 1
+ Number of Nodes with overlaps = 3708
+ Number of Nodes with overlaps = 374
+ Number of Nodes with overlaps = 82
+ Number of Nodes with overlaps = 10
+ Number of Nodes with overlaps = 4
+ Number of Nodes with overlaps = 1
+ Number of Nodes with overlaps = 0
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=0.011  | TNS=0.000  | WHS=N/A    | THS=N/A    |
+
+Phase 4.2 Global Iteration 1 | Checksum: 324b69f6a
+
+Time (s): cpu = 00:05:05 ; elapsed = 00:01:46 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91723 ; free virtual = 183823
+Phase 4 Rip-up And Reroute | Checksum: 324b69f6a
+
+Time (s): cpu = 00:05:05 ; elapsed = 00:01:46 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91723 ; free virtual = 183823
+
+Phase 5 Delay and Skew Optimization
+
+Phase 5.1 Delay CleanUp
+Phase 5.1 Delay CleanUp | Checksum: 27ca641da
+
+Time (s): cpu = 00:05:06 ; elapsed = 00:01:46 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91723 ; free virtual = 183823
+
+Phase 5.2 Clock Skew Optimization
+Phase 5.2 Clock Skew Optimization | Checksum: 27ca641da
+
+Time (s): cpu = 00:05:06 ; elapsed = 00:01:46 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91723 ; free virtual = 183823
+Phase 5 Delay and Skew Optimization | Checksum: 27ca641da
+
+Time (s): cpu = 00:05:06 ; elapsed = 00:01:46 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91728 ; free virtual = 183829
+
+Phase 6 Post Hold Fix
+
+Phase 6.1 Hold Fix Iter
+
+Phase 6.1.1 Update Timing
+Phase 6.1.1 Update Timing | Checksum: 2279f940e
+
+Time (s): cpu = 00:05:23 ; elapsed = 00:01:50 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91715 ; free virtual = 183816
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=0.011  | TNS=0.000  | WHS=0.011  | THS=0.000  |
+
+Phase 6.1 Hold Fix Iter | Checksum: 2279f940e
+
+Time (s): cpu = 00:05:23 ; elapsed = 00:01:50 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91715 ; free virtual = 183816
+Phase 6 Post Hold Fix | Checksum: 2279f940e
+
+Time (s): cpu = 00:05:24 ; elapsed = 00:01:50 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91715 ; free virtual = 183816
+
+Phase 7 Route finalize
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 11.6205 %
+  Global Horizontal Routing Utilization  = 13.1302 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 0
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 0
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Phase 7 Route finalize | Checksum: 2279f940e
+
+Time (s): cpu = 00:05:26 ; elapsed = 00:01:51 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91701 ; free virtual = 183802
+
+Phase 8 Verifying routed nets
+
+ Verification completed successfully
+Phase 8 Verifying routed nets | Checksum: 2279f940e
+
+Time (s): cpu = 00:05:26 ; elapsed = 00:01:51 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91714 ; free virtual = 183814
+
+Phase 9 Depositing Routes
+Phase 9 Depositing Routes | Checksum: 2279f940e
+
+Time (s): cpu = 00:05:32 ; elapsed = 00:01:55 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91736 ; free virtual = 183837
+
+Phase 10 Resolve XTalk
+Phase 10 Resolve XTalk | Checksum: 2279f940e
+
+Time (s): cpu = 00:05:33 ; elapsed = 00:01:56 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91736 ; free virtual = 183837
+
+Phase 11 Post Router Timing
+INFO: [Route 35-57] Estimated Timing Summary | WNS=0.011  | TNS=0.000  | WHS=0.011  | THS=0.000  |
+
+INFO: [Route 35-327] The final timing numbers are based on the router estimated timing analysis. For a complete and accurate timing signoff, please run report_timing_summary.
+Phase 11 Post Router Timing | Checksum: 2279f940e
+
+Time (s): cpu = 00:05:41 ; elapsed = 00:01:57 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91726 ; free virtual = 183826
+INFO: [Route 35-16] Router Completed Successfully
+
+Phase 12 Post-Route Event Processing
+Phase 12 Post-Route Event Processing | Checksum: 1c89f29d2
+
+Time (s): cpu = 00:05:43 ; elapsed = 00:01:59 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91731 ; free virtual = 183832
+Ending Routing Task | Checksum: 1c89f29d2
+
+Time (s): cpu = 00:05:45 ; elapsed = 00:02:00 . Memory (MB): peak = 5443.156 ; gain = 0.000 ; free physical = 91740 ; free virtual = 183840
+
+Routing Is Done.
+INFO: [Common 17-83] Releasing license: Implementation
+126 Infos, 202 Warnings, 0 Critical Warnings and 0 Errors encountered.
+route_design completed successfully
+route_design: Time (s): cpu = 00:05:53 ; elapsed = 00:02:04 . Memory (MB): peak = 5443.156 ; gain = 8.004 ; free physical = 91740 ; free virtual = 183841
+INFO: [runtcl-4] Executing : report_drc -file minitpu_wrapper_drc_routed.rpt -pb minitpu_wrapper_drc_routed.pb -rpx minitpu_wrapper_drc_routed.rpx
+Command: report_drc -file minitpu_wrapper_drc_routed.rpt -pb minitpu_wrapper_drc_routed.pb -rpx minitpu_wrapper_drc_routed.rpx
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 2-168] The results of DRC are in file /home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.runs/impl_1/minitpu_wrapper_drc_routed.rpt.
+report_drc completed successfully
+INFO: [runtcl-4] Executing : report_methodology -file minitpu_wrapper_methodology_drc_routed.rpt -pb minitpu_wrapper_methodology_drc_routed.pb -rpx minitpu_wrapper_methodology_drc_routed.rpx
+Command: report_methodology -file minitpu_wrapper_methodology_drc_routed.rpt -pb minitpu_wrapper_methodology_drc_routed.pb -rpx minitpu_wrapper_methodology_drc_routed.rpx
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [DRC 23-133] Running Methodology with 8 threads
+INFO: [Vivado_Tcl 2-1520] The results of Report Methodology are in file /home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.runs/impl_1/minitpu_wrapper_methodology_drc_routed.rpt.
+report_methodology completed successfully
+report_methodology: Time (s): cpu = 00:00:48 ; elapsed = 00:00:10 . Memory (MB): peak = 5499.184 ; gain = 0.000 ; free physical = 91765 ; free virtual = 183866
+INFO: [runtcl-4] Executing : report_power -file minitpu_wrapper_power_routed.rpt -pb minitpu_wrapper_power_summary_routed.pb -rpx minitpu_wrapper_power_routed.rpx
+Command: report_power -file minitpu_wrapper_power_routed.rpt -pb minitpu_wrapper_power_summary_routed.pb -rpx minitpu_wrapper_power_routed.rpx
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+WARNING: [Power 33-332] Found switching activity that implies high-fanout reset nets being asserted for excessive periods of time which may result in inaccurate power analysis.
+Resolution: To review and fix problems, please run Power Constraints Advisor in the GUI from Tools > Power Constraints Advisor or run report_power with the -advisory option to generate a text report.
+136 Infos, 203 Warnings, 0 Critical Warnings and 0 Errors encountered.
+report_power completed successfully
+report_power: Time (s): cpu = 00:00:46 ; elapsed = 00:00:24 . Memory (MB): peak = 5499.184 ; gain = 0.000 ; free physical = 91754 ; free virtual = 183865
+INFO: [runtcl-4] Executing : report_route_status -file minitpu_wrapper_route_status.rpt -pb minitpu_wrapper_route_status.pb
+INFO: [runtcl-4] Executing : report_timing_summary -max_paths 10 -report_unconstrained -file minitpu_wrapper_timing_summary_routed.rpt -pb minitpu_wrapper_timing_summary_routed.pb -rpx minitpu_wrapper_timing_summary_routed.rpx -warn_on_violation 
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -1, Temperature grade: I, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 8 CPUs
+INFO: [runtcl-4] Executing : report_incremental_reuse -file minitpu_wrapper_incremental_reuse_routed.rpt
+INFO: [Vivado_Tcl 4-1062] Incremental flow is disabled. No incremental reuse Info to report.
+INFO: [runtcl-4] Executing : report_clock_utilization -file minitpu_wrapper_clock_utilization_routed.rpt
+INFO: [runtcl-4] Executing : report_bus_skew -warn_on_violation -file minitpu_wrapper_bus_skew_routed.rpt -pb minitpu_wrapper_bus_skew_routed.pb -rpx minitpu_wrapper_bus_skew_routed.rpx
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -1, Temperature grade: I, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 8 CPUs
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Write ShapeDB Complete: Time (s): cpu = 00:00:00.6 ; elapsed = 00:00:00.13 . Memory (MB): peak = 5499.184 ; gain = 0.000 ; free physical = 91738 ; free virtual = 183860
+Wrote PlaceDB: Time (s): cpu = 00:00:08 ; elapsed = 00:00:03 . Memory (MB): peak = 5499.184 ; gain = 0.000 ; free physical = 91685 ; free virtual = 183868
+Wrote PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 5499.184 ; gain = 0.000 ; free physical = 91700 ; free virtual = 183883
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Wrote RouteStorage: Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.82 . Memory (MB): peak = 5499.184 ; gain = 0.000 ; free physical = 91689 ; free virtual = 183886
+Wrote Netlist Cache: Time (s): cpu = 00:00:00.14 ; elapsed = 00:00:00.08 . Memory (MB): peak = 5499.184 ; gain = 0.000 ; free physical = 91692 ; free virtual = 183894
+Wrote Device Cache: Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.02 . Memory (MB): peak = 5499.184 ; gain = 0.000 ; free physical = 91694 ; free virtual = 183899
+Write Physdb Complete: Time (s): cpu = 00:00:10 ; elapsed = 00:00:04 . Memory (MB): peak = 5499.184 ; gain = 0.000 ; free physical = 91693 ; free virtual = 183899
+INFO: [Common 17-1381] The checkpoint '/home/mss464/minitpu-md/tpu/ultra96-v2/output/tpu_system/tpu_system.runs/impl_1/minitpu_wrapper_routed.dcp' has been generated.
+write_checkpoint: Time (s): cpu = 00:00:14 ; elapsed = 00:00:08 . Memory (MB): peak = 5499.184 ; gain = 0.000 ; free physical = 91739 ; free virtual = 183881
+INFO: [Common 17-206] Exiting Vivado at Fri Feb 27 04:32:00 2026...
